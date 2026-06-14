@@ -1,0 +1,80 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  background-image: url("assets/background.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  font-family: Georgia, serif;
+}
+
+#effect-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+
+  width: 100vw;
+  height: 100vh;
+
+  display: block;
+}
+
+#input-panel {
+  position: fixed;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+#input-panel h1 {
+  margin: 0;
+
+  font-size: 18px;
+  font-weight: 400;
+  color: #5a5a5a;
+}
+
+#god-input {
+  width: 260px;
+  height: 38px;
+  padding: 0 16px;
+
+  border: none;
+  border-radius: 40px;
+  outline: none;
+
+  background: rgba(255, 255, 255, 0.45);
+  color: #3d2e2a;
+
+  font-family: Georgia, serif;
+  font-size: 15px;
+  text-align: center;
+}
+
+#submit-button {
+  width: 90px;
+  height: 36px;
+
+  border: none;
+  border-radius: 30px;
+
+  background: #8b9049;
+  color: #f3e1de;
+
+  font-family: Georgia, serif;
+  font-size: 14px;
+  cursor: pointer;
+}
