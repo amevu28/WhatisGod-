@@ -555,7 +555,7 @@ class BlurCircle {
     this.colorValue = colorValue;
 
     this.radius = 14;
-    this.alpha = 220;
+    this.alpha = 100;
   }
 
   update() {
