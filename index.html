@@ -10,19 +10,63 @@
 </head>
 
 <body>
-  <section id="input-panel">
-    <h1>What is God to you?</h1>
+  <!-- LANDING PAGE -->
+  <section id="landing-page">
+    <img class="landing-bg" src="assets/background.png" alt="" />
+
+    <div class="landing-composition">
+      <img class="frame" src="assets/frame.png" alt="" />
+      <img class="what-is" src="assets/what-is.png" alt="What is" />
+      <img class="god-title" src="assets/god-title.png" alt="God?" />
+      <img class="arrow" src="assets/arrow.png" alt="drag to start" />
+    </div>
+  </section>
+
+ <!-- MAIN INTERACTION INPUT -->
+<section id="input-panel">
+  <img
+    id="question-image"
+    src="assets/question.png"
+    alt="What is God to you?"
+  />
+
+  <div id="answer-row">
+    <div id="type-bar-wrap">
+      <img
+        id="type-bar-image"
+        src="assets/type-bar.png"
+        alt=""
+      />
+
+      <input
+        id="god-input"
+        type="text"
+        maxlength="40"
+        autocomplete="off"
+      />
+    </div>
+
+    <button id="submit-button" aria-label="send">
+      <img
+        id="send-button-image"
+        src="assets/send-button.png"
+        alt="send"
+      />
+    </button>
+  </div>
+</section>
+
+  <!-- ERASE SLIDER -->
+  <section id="erase-panel">
+    <span>erase</span>
 
     <input
-      id="god-input"
-      type="text"
-      maxlength="40"
-      placeholder="type your word"
+      id="erase-slider"
+      type="range"
+      min="0"
+      max="100"
+      value="0"
     />
-
-    <button id="submit-button">
-      submit
-    </button>
   </section>
 
   <script src="script.js"></script>

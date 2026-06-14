@@ -1,14 +1,177 @@
 // =====================================================
-// WHAT IS GOD TO YOU?
-// Vanilla JavaScript only.
-// No p5.js, no external JS/CSS libraries.
+// LANDING PAGE DRAG TRANSITION
+// kéo từ trái sang phải như lật / kéo một trang sách
+// không fade opacity
 // =====================================================
 
+let landingPage;
+let isLandingDragging = false;
+let landingStartX = 0;
+let landingCurrentX = 0;
+let landingPassed = false;
 
-// =====================================================
-// 1. WORD BANK
-// =====================================================
+// số lớn hơn = phải kéo xa hơn, chuyển chậm hơn
+let landingDragDistance = 1000;
 
+// số lớn hơn = phải kéo xa hơn mới thật sự vào page
+let landingTriggerDistance = 420;
+
+window.addEventListener("load", function () {
+  landingPage = document.getElementById("landing-page");
+
+  if (!landingPage) {
+    return;
+  }
+
+  landingPage.style.opacity = "1";
+
+  landingPage.addEventListener("mousedown", startLandingDrag);
+  window.addEventListener("mousemove", moveLandingDrag);
+  window.addEventListener("mouseup", endLandingDrag);
+
+  landingPage.addEventListener("touchstart", startLandingTouch, {
+    passive: false
+  });
+
+  window.addEventListener("touchmove", moveLandingTouch, {
+    passive: false
+  });
+
+  window.addEventListener("touchend", endLandingDrag);
+});
+
+function startLandingDrag(event) {
+  if (landingPassed) {
+    return;
+  }
+
+  isLandingDragging = true;
+  landingStartX = event.clientX;
+  landingCurrentX = event.clientX;
+
+  landingPage.style.transition = "";
+  landingPage.style.opacity = "1";
+  landingPage.classList.add("dragging");
+}
+
+function moveLandingDrag(event) {
+  if (!isLandingDragging || landingPassed) {
+    return;
+  }
+
+  landingCurrentX = event.clientX;
+  updateLandingDrag();
+}
+
+function startLandingTouch(event) {
+  if (landingPassed) {
+    return;
+  }
+
+  event.preventDefault();
+
+  const touch = event.touches[0];
+
+  if (!touch) {
+    return;
+  }
+
+  isLandingDragging = true;
+  landingStartX = touch.clientX;
+  landingCurrentX = touch.clientX;
+
+  landingPage.style.transition = "";
+  landingPage.style.opacity = "1";
+  landingPage.classList.add("dragging");
+}
+
+function moveLandingTouch(event) {
+  if (!isLandingDragging || landingPassed) {
+    return;
+  }
+
+  event.preventDefault();
+
+  const touch = event.touches[0];
+
+  if (!touch) {
+    return;
+  }
+
+  landingCurrentX = touch.clientX;
+  updateLandingDrag();
+}
+
+function updateLandingDrag() {
+  const dragDistance = Math.max(
+    0,
+    landingCurrentX - landingStartX
+  );
+
+  const progress = Math.min(
+    dragDistance / landingDragDistance,
+    1
+  );
+
+  // chỉ trượt ngang, không fade
+  landingPage.style.transform =
+    `translateX(${progress * 100}vw)`;
+
+  landingPage.style.opacity = "1";
+
+  if (progress >= 1) {
+    enterMainPage();
+  }
+}
+
+function endLandingDrag() {
+  if (!isLandingDragging || landingPassed) {
+    return;
+  }
+
+  isLandingDragging = false;
+  landingPage.classList.remove("dragging");
+
+  const dragDistance = Math.max(
+    0,
+    landingCurrentX - landingStartX
+  );
+
+  if (dragDistance > landingTriggerDistance) {
+    enterMainPage();
+  } else {
+    // chưa kéo đủ xa → trang trượt về lại như trang sách đóng lại
+    landingPage.style.transition =
+      "transform 1.2s cubic-bezier(.16,.84,.24,1)";
+
+    landingPage.style.transform = "translateX(0)";
+    landingPage.style.opacity = "1";
+
+    setTimeout(function () {
+      landingPage.style.transition = "";
+    }, 1200);
+  }
+}
+
+function enterMainPage() {
+  if (landingPassed) {
+    return;
+  }
+
+  landingPassed = true;
+  isLandingDragging = false;
+
+  // trượt ra ngoài như một trang được kéo sang phải
+  landingPage.style.transition =
+    "transform 2.4s cubic-bezier(.16,.84,.24,1)";
+
+  landingPage.style.transform = "translateX(100vw)";
+  landingPage.style.opacity = "1";
+
+  setTimeout(function () {
+    landingPage.style.display = "none";
+  }, 2400);
+}
 const qualities = [
   "peace",
   "love",
@@ -706,3 +869,96 @@ function hexToRGBA(hex, alpha) {
 
   return `rgba(${r},${g},${b},${alpha})`;
 }
+
+// =====================================================
+// ADD-ON: ERASE SLIDER
+// Paste nguyên block này xuống cuối script.js
+// Không cần sửa các effect cũ.
+// =====================================================
+
+let eraseProgress = 0;
+
+window.addEventListener("load", function () {
+  const eraseSlider = document.getElementById("erase-slider");
+
+  if (!eraseSlider) {
+    console.warn("Không tìm thấy #erase-slider trong HTML.");
+    return;
+  }
+
+  eraseSlider.addEventListener("input", function () {
+    eraseProgress = Number(eraseSlider.value) / 100;
+
+    const eraseX = canvas.width * eraseProgress;
+
+    // xoá object nằm trong vùng đã bị wipe
+    effects = effects.filter(function (effect) {
+      return effect.x > eraseX;
+    });
+
+    points = points.filter(function (point) {
+      return point.x > eraseX;
+    });
+
+    wipeCanvasFromLeft();
+  });
+
+  eraseSlider.addEventListener("change", function () {
+    if (eraseProgress >= 1) {
+      effects = [];
+      points = [];
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      eraseProgress = 0;
+      eraseSlider.value = 0;
+    }
+  });
+
+  function wipeCanvasFromLeft() {
+  if (!canvas || !ctx) {
+    return;
+  }
+
+  const eraseX = canvas.width * eraseProgress;
+
+  // độ mềm của mép xoá
+  // tăng số này = mép xoá mềm hơn
+  const softEdge = 140;
+
+  ctx.save();
+
+  ctx.globalCompositeOperation = "destination-out";
+
+  // 1. xoá sạch vùng bên trái
+  ctx.fillStyle = "rgba(0,0,0,1)";
+  ctx.fillRect(
+    0,
+    0,
+    Math.max(0, eraseX - softEdge),
+    canvas.height
+  );
+
+  // 2. xoá mềm vùng rìa
+  const gradient = ctx.createLinearGradient(
+    eraseX - softEdge,
+    0,
+    eraseX,
+    0
+  );
+
+  gradient.addColorStop(0, "rgba(0,0,0,1)");
+  gradient.addColorStop(1, "rgba(0,0,0,0)");
+
+  ctx.fillStyle = gradient;
+  ctx.fillRect(
+    eraseX - softEdge,
+    0,
+    softEdge,
+    canvas.height
+  );
+
+  ctx.restore();
+
+  ctx.globalCompositeOperation = "source-over";
+}});

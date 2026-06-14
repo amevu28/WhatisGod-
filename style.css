@@ -2,8 +2,10 @@ html,
 body {
   margin: 0;
   padding: 0;
+
   width: 100%;
   height: 100%;
+
   overflow: hidden;
 
   background-image: url("assets/background.png");
@@ -14,10 +16,16 @@ body {
   font-family: Georgia, serif;
 }
 
+/* ==========================
+CANVAS
+========================== */
+
 #effect-canvas {
   position: fixed;
+
   top: 0;
   left: 0;
+
   z-index: 1;
 
   width: 100vw;
@@ -26,55 +34,282 @@ body {
   display: block;
 }
 
+
+/* ==========================
+LANDING PAGE
+========================== */
+
+#landing-page {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 999;
+
+  overflow: hidden;
+
+  background: transparent;
+
+  cursor: grab;
+}
+
+#landing-page.dragging {
+  cursor: grabbing;
+}
+
+.landing-bg {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.landing-composition {
+  position: absolute;
+
+  left: 50%;
+  top: 46%;
+
+  width: min(100vw, 1440px);
+  aspect-ratio: 16 / 9;
+
+  transform: translate(-50%, -50%);
+}
+
+/* frame bám theo composition */
+.frame {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 56%;
+
+  transform: translate(-50%, -50%);
+
+  opacity: 1;
+}
+
+/* what-is bám theo composition */
+.what-is {
+  position: absolute;
+
+  left: 43%;
+  top: 42%;
+
+  width: 11%;
+
+  transform: translate(-50%, -50%);
+}
+
+/* God bám theo composition */
+.god-title {
+  position: absolute;
+
+  left: 55%;
+  top: 55%;
+
+  width: 20%;
+
+  transform: translate(-50%, -50%);
+}
+.arrow {
+  position: absolute;
+
+  left: 50%;
+  bottom: 9%;
+
+  width: 16vw;
+
+  max-width: 260px;
+
+  transform:
+  translateX(-50%);
+
+  animation:
+  breathe 1.8s infinite;
+}
+
+@keyframes breathe {
+
+0%{
+opacity:.55;
+
+transform:
+translateX(-50%)
+translateY(0px);
+}
+
+50%{
+opacity:1;
+
+transform:
+translateX(-50%)
+translateY(8px);
+}
+
+100%{
+opacity:.55;
+
+transform:
+translateX(-50%)
+translateY(0px);
+}
+
+}
+
+
+/* ==========================
+CUSTOM QUESTION INPUT
+dùng asset từ Illustrator
+========================== */
+
 #input-panel {
   position: fixed;
-  top: 40px;
-  left: 50%;
-  transform: translateX(-50%);
+
+  left: 70px;
+  top: 68px;
+
   z-index: 10;
 
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+
+  gap: 22px;
+}
+
+/* ảnh chữ "What is God to you?" */
+#question-image {
+  width: 440px;
+  height: auto;
+  display: block;
+}
+
+/* hàng input + nút send */
+#answer-row {
+  display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
 }
 
-#input-panel h1 {
-  margin: 0;
+/* wrapper cho ảnh type-bar + input thật */
+#type-bar-wrap {
+  position: relative;
 
-  font-size: 18px;
-  font-weight: 400;
-  color: #5a5a5a;
+  width: 320px;
+  height: 44px;
 }
 
+/* ảnh type bar */
+#type-bar-image {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: fill;
+
+  pointer-events: none;
+}
+
+/* input thật nằm đè lên type-bar */
 #god-input {
-  width: 260px;
-  height: 38px;
-  padding: 0 16px;
+  position: absolute;
+
+  left: 18px;
+  top: 4px;
+
+  width: calc(100% - 36px);
+  height: 34px;
+
+  padding: 0;
 
   border: none;
-  border-radius: 40px;
   outline: none;
 
-  background: rgba(255, 255, 255, 0.45);
-  color: #3d2e2a;
+  background: transparent;
+
+  color: #1c1a0f;
 
   font-family: Georgia, serif;
-  font-size: 15px;
-  text-align: center;
+  font-size: 20px;
+  font-style: italic;
+
+  text-align: left;
 }
 
+/* nút send thật */
 #submit-button {
-  width: 90px;
-  height: 36px;
+  width: 108px;
+  height: 44px;
+
+  padding: 0;
 
   border: none;
-  border-radius: 30px;
+  background: transparent;
 
-  background: #8b9049;
-  color: #f3e1de;
-
-  font-family: Georgia, serif;
-  font-size: 14px;
   cursor: pointer;
+}
+
+/* ảnh send button */
+#send-button-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+
+  pointer-events: none;
+}
+
+#submit-button:hover {
+  transform: translateY(1px);
+}
+
+#submit-button:active {
+  transform: translateY(2px);
+}
+
+
+/* ==========================
+ERASE
+========================== */
+
+#erase-panel {
+
+  position: fixed;
+
+  left: 50%;
+
+  bottom: 28px;
+
+  transform:
+  translateX(-50%);
+
+  z-index: 20;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  color: #5a5a5a;
+
+  font-size: 13px;
+}
+
+#erase-slider {
+
+  width: 180px;
+
+  cursor: pointer;
+
+  accent-color:
+  #8b9049;
 }
