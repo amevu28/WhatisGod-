@@ -79,21 +79,6 @@ LANDING PAGE
 
   transform: translate(-50%, -50%);
 }
-
-/* frame bám theo composition */
-.frame {
-  position: absolute;
-
-  left: 50%;
-  top: 50%;
-
-  width: 56%;
-
-  transform: translate(-50%, -50%);
-
-  opacity: 1;
-}
-
 /* what-is bám theo composition */
 .what-is {
   position: absolute;
