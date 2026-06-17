@@ -326,32 +326,36 @@ const palette = [
 // =====================================================
 
 const wordNotes = {
-  "peace": "G5",
-  "love": "A5",
-  "joy": "G5",
-  "healing": "E5",
-  "truth": "G5",
-  "presence": "A5",
-  "stillness": "G5",
-  "the holy spirit": "E5",
-  "wholeness": "D5",
-  "forgiveness": "D5",
-  "new perception": "B4",
-  "awakening": "C5"
+  "peace": "D5",
+  "love": "F5",
+  "joy": "A5",
+
+  "healing": "G5",
+  "truth": "C5",
+  "presence": "Bb5",
+
+  "stillness": "E5",
+  "the holy spirit": "D6",
+
+  "wholeness": "A4",
+  "forgiveness": "F4",
+
+  "new perception": "C6",
+  "awakening": "G4"
 };
 
 const fallbackNotes = [
+  "D5",
+  "F5",
   "G5",
   "A5",
-  "G5",
+  "Bb5",
   "E5",
-  "D5",
-  "D5",
-  "B4",
-  "C5"
+  "C6",
+  "A4",
+  "F4",
+  "G4"
 ];
-
-
 // =====================================================
 // CANVAS + STATE
 // =====================================================

@@ -1,3 +1,22 @@
+/* ==========================
+CUSTOM FONT
+1589_Humane_BordeauxW00-It
+========================== */
+
+@font-face {
+  font-family: "Bordeaux";
+
+  src:
+    url("./assets/1589_Humane_BordeauxW00-It.ttf")
+    format("truetype");
+
+  font-weight: normal;
+
+  font-style: italic;
+
+  font-display: swap;
+}
+
 html,
 body {
   margin: 0;
@@ -407,11 +426,16 @@ ERASE
 
   display: flex;
   align-items: center;
+
   gap: 12px;
 
-  color: #2d4511;
+  color: #172209;
 
-  font-size: 15px;
+  font-family:
+  "Bordeaux",
+  serif;
+
+  font-size: 35px;
 }
 
 #erase-slider {
@@ -419,6 +443,6 @@ ERASE
 
   cursor: pointer;
 
-  accent-color: #8b9049;
+  /* đổi màu slider ở đây */
+  accent-color: #c6cb63;
 }
-
