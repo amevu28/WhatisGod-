@@ -4,58 +4,141 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>What is God to You?</title>
+  <title>Dear God</title>
 
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-  <!-- LANDING PAGE -->
-  <section id="landing-page">
-    <img class="landing-bg" src="assets/background.png" alt="" />
+  <!-- ==========================
+  LANDING PAGE
+  =========================== -->
 
-    <div class="landing-composition">
-      <img class="what-is" src="assets/what-is.png" alt="What is" />
-      <img class="god-title" src="assets/god-title.png" alt="God?" />
-      <img class="arrow" src="assets/arrow.png" alt="drag to start" />
+  <section id="landing-page">
+    <img
+      class="landing-bg"
+      src="assets/background.png"
+      alt=""
+    />
+
+   <div class="landing-composition">
+
+  <!-- FRAME -->
+  <img
+    class="landing-frame"
+    src="assets/frame.png"
+    alt=""
+  />
+
+  <!-- TITLE -->
+  <img
+    class="dear-god"
+    src="assets/dear-god.png"
+    alt="Dear God,"
+  />
+
+  <!-- AUTHOR -->
+  <img
+    class="by-ame"
+    src="assets/by-ame.png"
+    alt="by amè"
+  />
+
+  <!-- DRAG -->
+  <img
+    class="drag-arrow"
+    src="assets/drag-to-start-arrow.png"
+    alt="drag to start"
+  />
+
+</div>
+    <nav class="landing-buttons" aria-label="landing controls">
+      <button id="sound-toggle" type="button">
+        <img
+          id="sound-toggle-image"
+          src="assets/sound-on-btn.png"
+          alt="sound on"
+        />
+      </button>
+
+      <button id="info-button" type="button">
+        <img
+          src="assets/info.png"
+          alt="information"
+        />
+      </button>
+    </nav>
+  </section>
+
+
+  <!-- ==========================
+  INFORMATION PANEL
+  =========================== -->
+
+  <section id="info-panel" aria-label="information panel">
+    <button id="close-info" type="button">
+      ×
+    </button>
+
+    <h2>information</h2>
+
+    <p>
+      Dear God is an interactive prayer canvas.
+      Drag across the screen to reveal words, sounds,
+      and traces of presence.
+    </p>
+
+    <p>
+      Each word becomes a small visual and sonic mark.
+      The page slowly becomes a shared image of what God
+      might mean to different people.
+    </p>
+  </section>
+
+
+  <!-- ==========================
+  MAIN INTERACTION INPUT
+  =========================== -->
+
+  <section id="input-panel">
+    <img
+      id="question-image"
+      src="assets/question.png"
+      alt="What is God to you?"
+    />
+
+    <div id="answer-row">
+      <div id="type-bar-wrap">
+        <img
+          id="type-bar-image"
+          src="assets/type-bar.png"
+          alt=""
+        />
+
+        <input
+          id="god-input"
+          type="text"
+          maxlength="40"
+          autocomplete="off"
+          aria-label="type your word"
+        />
+      </div>
+
+      <button id="submit-button" type="button" aria-label="send">
+        <img
+          id="send-button-image"
+          src="assets/send-button.png"
+          alt="send"
+        />
+      </button>
     </div>
   </section>
 
- <!-- MAIN INTERACTION INPUT -->
-<section id="input-panel">
-  <img
-    id="question-image"
-    src="assets/question.png"
-    alt="What is God to you?"
-  />
 
-  <div id="answer-row">
-    <div id="type-bar-wrap">
-      <img
-        id="type-bar-image"
-        src="assets/type-bar.png"
-        alt=""
-      />
+  <!-- ==========================
+  ERASE SLIDER
+  =========================== -->
 
-      <input
-        id="god-input"
-        type="text"
-        maxlength="40"
-        autocomplete="off"
-      />
-    </div>
-
-    <button id="submit-button" aria-label="send">
-      <img
-        id="send-button-image"
-        src="assets/send-button.png"
-        alt="send"
-      />
-    </button>
-  </div>
-</section>
-
-  <!-- ERASE SLIDER -->
   <section id="erase-panel">
     <span>erase</span>
 
@@ -65,8 +148,10 @@
       min="0"
       max="100"
       value="0"
+      aria-label="erase canvas"
     />
   </section>
+
 
   <script src="script.js"></script>
 </body>

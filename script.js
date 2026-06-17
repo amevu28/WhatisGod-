@@ -10,18 +10,13 @@ let landingStartX = 0;
 let landingCurrentX = 0;
 let landingPassed = false;
 
-// số lớn hơn = phải kéo xa hơn, chuyển chậm hơn
 let landingDragDistance = 1000;
-
-// số lớn hơn = phải kéo xa hơn mới thật sự vào page
 let landingTriggerDistance = 420;
 
 window.addEventListener("load", function () {
   landingPage = document.getElementById("landing-page");
 
-  if (!landingPage) {
-    return;
-  }
+  if (!landingPage) return;
 
   landingPage.style.opacity = "1";
 
@@ -41,9 +36,7 @@ window.addEventListener("load", function () {
 });
 
 function startLandingDrag(event) {
-  if (landingPassed) {
-    return;
-  }
+  if (landingPassed) return;
 
   isLandingDragging = true;
   landingStartX = event.clientX;
@@ -55,26 +48,19 @@ function startLandingDrag(event) {
 }
 
 function moveLandingDrag(event) {
-  if (!isLandingDragging || landingPassed) {
-    return;
-  }
+  if (!isLandingDragging || landingPassed) return;
 
   landingCurrentX = event.clientX;
   updateLandingDrag();
 }
 
 function startLandingTouch(event) {
-  if (landingPassed) {
-    return;
-  }
+  if (landingPassed) return;
 
   event.preventDefault();
 
   const touch = event.touches[0];
-
-  if (!touch) {
-    return;
-  }
+  if (!touch) return;
 
   isLandingDragging = true;
   landingStartX = touch.clientX;
@@ -86,37 +72,26 @@ function startLandingTouch(event) {
 }
 
 function moveLandingTouch(event) {
-  if (!isLandingDragging || landingPassed) {
-    return;
-  }
+  if (!isLandingDragging || landingPassed) return;
 
   event.preventDefault();
 
   const touch = event.touches[0];
-
-  if (!touch) {
-    return;
-  }
+  if (!touch) return;
 
   landingCurrentX = touch.clientX;
   updateLandingDrag();
 }
 
 function updateLandingDrag() {
-  const dragDistance = Math.max(
-    0,
-    landingCurrentX - landingStartX
-  );
+  const dragDistance = Math.max(0, landingCurrentX - landingStartX);
 
   const progress = Math.min(
     dragDistance / landingDragDistance,
     1
   );
 
-  // chỉ trượt ngang, không fade
-  landingPage.style.transform =
-    `translateX(${progress * 100}vw)`;
-
+  landingPage.style.transform = `translateX(${progress * 100}vw)`;
   landingPage.style.opacity = "1";
 
   if (progress >= 1) {
@@ -125,22 +100,16 @@ function updateLandingDrag() {
 }
 
 function endLandingDrag() {
-  if (!isLandingDragging || landingPassed) {
-    return;
-  }
+  if (!isLandingDragging || landingPassed) return;
 
   isLandingDragging = false;
   landingPage.classList.remove("dragging");
 
-  const dragDistance = Math.max(
-    0,
-    landingCurrentX - landingStartX
-  );
+  const dragDistance = Math.max(0, landingCurrentX - landingStartX);
 
   if (dragDistance > landingTriggerDistance) {
     enterMainPage();
   } else {
-    // chưa kéo đủ xa → trang trượt về lại như trang sách đóng lại
     landingPage.style.transition =
       "transform 1.2s cubic-bezier(.16,.84,.24,1)";
 
@@ -154,14 +123,11 @@ function endLandingDrag() {
 }
 
 function enterMainPage() {
-  if (landingPassed) {
-    return;
-  }
+  if (landingPassed) return;
 
   landingPassed = true;
   isLandingDragging = false;
 
-  // trượt ra ngoài như một trang được kéo sang phải
   landingPage.style.transition =
     "transform 2.4s cubic-bezier(.16,.84,.24,1)";
 
@@ -172,6 +138,151 @@ function enterMainPage() {
     landingPage.style.display = "none";
   }, 2400);
 }
+
+
+// =====================================================
+// HOVER INK TRAIL
+// hiệu ứng mực nhỏ khi di chuyển chuột
+// fade nhanh, không cần click
+// =====================================================
+
+let inkCanvas;
+let inkCtx;
+let inkMarks = [];
+
+let lastInkX = null;
+let lastInkY = null;
+
+// chỉnh màu mực ở đây
+let inkColor = "#acbf4eff";
+
+// độ dày nét mực
+let inkLineWidth = 3;
+
+// số nhỏ hơn = mực biến mất nhanh hơn
+let inkLife = 18;
+
+// khoảng cách tối thiểu mới tạo nét mới
+let inkMinDistance = 6;
+
+// độ run của nét bút
+let inkJitter = 1.6;
+
+window.addEventListener("load", function () {
+  createInkCanvas();
+
+  window.addEventListener("resize", resizeInkCanvas);
+  window.addEventListener("mousemove", handleInkMove);
+
+  animateInk();
+});
+
+function createInkCanvas() {
+  inkCanvas = document.createElement("canvas");
+  inkCanvas.id = "ink-canvas";
+
+  inkCtx = inkCanvas.getContext("2d");
+
+  document.body.appendChild(inkCanvas);
+
+  inkCanvas.style.position = "fixed";
+  inkCanvas.style.top = "0";
+  inkCanvas.style.left = "0";
+  inkCanvas.style.width = "100vw";
+  inkCanvas.style.height = "100vh";
+
+  // cao hơn landing để thấy trên landing page
+  // pointer-events none nên không chặn drag/click
+  inkCanvas.style.zIndex = "1201";
+  inkCanvas.style.pointerEvents = "none";
+
+  resizeInkCanvas();
+}
+
+function resizeInkCanvas() {
+  if (!inkCanvas) return;
+
+  inkCanvas.width = window.innerWidth;
+  inkCanvas.height = window.innerHeight;
+}
+
+function handleInkMove(event) {
+  const x = event.clientX;
+  const y = event.clientY;
+
+  if (lastInkX === null || lastInkY === null) {
+    lastInkX = x;
+    lastInkY = y;
+    return;
+  }
+
+  const d = getDistance(x, y, lastInkX, lastInkY);
+
+  if (d < inkMinDistance) return;
+
+  inkMarks.push({
+    x1: lastInkX + random(-inkJitter, inkJitter),
+    y1: lastInkY + random(-inkJitter, inkJitter),
+    x2: x + random(-inkJitter, inkJitter),
+    y2: y + random(-inkJitter, inkJitter),
+    life: inkLife
+  });
+
+  lastInkX = x;
+  lastInkY = y;
+}
+
+function animateInk() {
+  if (!inkCtx || !inkCanvas) {
+    requestAnimationFrame(animateInk);
+    return;
+  }
+
+  inkCtx.clearRect(0, 0, inkCanvas.width, inkCanvas.height);
+
+  for (let i = inkMarks.length - 1; i >= 0; i--) {
+    const mark = inkMarks[i];
+    const alpha = mark.life / inkLife;
+
+    inkCtx.save();
+
+    inkCtx.strokeStyle = hexToRGBA(inkColor, alpha * 0.65);
+    inkCtx.lineWidth = inkLineWidth;
+    inkCtx.lineCap = "round";
+    inkCtx.lineJoin = "round";
+
+    inkCtx.beginPath();
+    inkCtx.moveTo(mark.x1, mark.y1);
+
+    const midX = (mark.x1 + mark.x2) / 2 + random(-2, 2);
+    const midY = (mark.y1 + mark.y2) / 2 + random(-2, 2);
+
+    inkCtx.quadraticCurveTo(
+      midX,
+      midY,
+      mark.x2,
+      mark.y2
+    );
+
+    inkCtx.stroke();
+
+    inkCtx.restore();
+
+    mark.life -= 1;
+
+    if (mark.life <= 0) {
+      inkMarks.splice(i, 1);
+    }
+  }
+
+  requestAnimationFrame(animateInk);
+}
+
+
+// =====================================================
+// WORD BANK
+// =====================================================
+
 const qualities = [
   "peace",
   "love",
@@ -191,7 +302,7 @@ const userWords = [];
 
 
 // =====================================================
-// 2. COLOR PALETTE
+// COLOR PALETTE
 // =====================================================
 
 const palette = [
@@ -211,8 +322,7 @@ const palette = [
 
 
 // =====================================================
-// 3. SOUND NOTES
-// Silent Night inspired note pattern.
+// SOUND NOTES
 // =====================================================
 
 const wordNotes = {
@@ -243,7 +353,7 @@ const fallbackNotes = [
 
 
 // =====================================================
-// 4. CANVAS + STATE
+// CANVAS + STATE
 // =====================================================
 
 let canvas;
@@ -262,29 +372,18 @@ let audioContext = null;
 
 
 // =====================================================
-// 5. SETTINGS YOU CAN MANUALLY CHANGE
+// SETTINGS
 // =====================================================
 
-// lớn hơn = chữ hiện thưa hơn
 let triggerDelay = 220;
-
-// lớn hơn = phải drag xa hơn mới hiện chữ mới
 let minDragDistance = 90;
-
-// số điểm line được lưu
 let maxPoints = 10;
-
-// 0.5 = 50% word user, 50% word bank
-// 1 = nếu user đã nhập, chỉ dùng word user
 let userWordChance = 0.5;
-
-// nhỏ hơn = vệt lưu lâu hơn
-// lớn hơn = vệt tan nhanh hơn
 let fadeAlpha = 0.0055;
 
 
 // =====================================================
-// 6. SETUP
+// SETUP
 // =====================================================
 
 window.addEventListener("load", setup);
@@ -301,13 +400,17 @@ function setup() {
   const input = document.getElementById("god-input");
   const button = document.getElementById("submit-button");
 
-  button.addEventListener("click", submitWord);
+  if (button) {
+    button.addEventListener("click", submitWord);
+  }
 
-  input.addEventListener("keydown", function (event) {
-    if (event.key === "Enter") {
-      submitWord();
-    }
-  });
+  if (input) {
+    input.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        submitWord();
+      }
+    });
+  }
 
   window.addEventListener("resize", resizeCanvas);
 
@@ -326,22 +429,25 @@ function setup() {
 }
 
 function resizeCanvas() {
+  if (!canvas) return;
+
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 }
 
 
 // =====================================================
-// 7. INPUT
+// INPUT
 // =====================================================
 
 function submitWord() {
   const input = document.getElementById("god-input");
+
+  if (!input) return;
+
   const value = input.value.trim().toLowerCase();
 
-  if (value === "") {
-    return;
-  }
+  if (value === "") return;
 
   userWords.push(value);
   input.value = "";
@@ -349,13 +455,11 @@ function submitWord() {
 
 
 // =====================================================
-// 8. MOUSE + TOUCH INTERACTION
+// MOUSE + TOUCH INTERACTION
 // =====================================================
 
 function handleMouseDown(event) {
-  if (isClickingInputPanel(event.clientY)) {
-    return;
-  }
+  if (isClickingInputPanel(event.clientY)) return;
 
   startAudio();
 
@@ -369,13 +473,9 @@ function handleMouseDown(event) {
 }
 
 function handleMouseMove(event) {
-  if (event.buttons !== 1) {
-    return;
-  }
+  if (event.buttons !== 1) return;
 
-  if (isClickingInputPanel(event.clientY)) {
-    return;
-  }
+  if (isClickingInputPanel(event.clientY)) return;
 
   handleDrag(
     event.clientX,
@@ -390,13 +490,8 @@ function handleTouchStart(event) {
 
   const touch = event.touches[0];
 
-  if (!touch) {
-    return;
-  }
-
-  if (isClickingInputPanel(touch.clientY)) {
-    return;
-  }
+  if (!touch) return;
+  if (isClickingInputPanel(touch.clientY)) return;
 
   startAudio();
 
@@ -414,13 +509,8 @@ function handleTouchMove(event) {
 
   const touch = event.touches[0];
 
-  if (!touch) {
-    return;
-  }
-
-  if (isClickingInputPanel(touch.clientY)) {
-    return;
-  }
+  if (!touch) return;
+  if (isClickingInputPanel(touch.clientY)) return;
 
   const dx = touch.clientX - lastSpawnX;
   const dy = touch.clientY - lastSpawnY;
@@ -434,8 +524,6 @@ function handleDrag(x, y, dx, dy) {
   const distance = getDistance(x, y, lastSpawnX, lastSpawnY);
   const speed = Math.sqrt(dx * dx + dy * dy);
 
-  // drag nhẹ = chữ nhỏ
-  // drag mạnh = chữ lớn hơn
   currentFontSize = mapValue(
     speed,
     0,
@@ -460,7 +548,7 @@ function isClickingInputPanel(y) {
 
 
 // =====================================================
-// 9. SPAWN EFFECT
+// SPAWN EFFECT
 // =====================================================
 
 function spawn(x, y) {
@@ -493,8 +581,7 @@ function spawn(x, y) {
 
 
 // =====================================================
-// 10. SOUND — WEB AUDIO API
-// No external library.
+// SOUND
 // =====================================================
 
 function startAudio() {
@@ -511,9 +598,7 @@ function startAudio() {
 }
 
 function playWordSound(word) {
-  if (!audioContext) {
-    return;
-  }
+  if (!audioContext) return;
 
   const note = wordNotes[word] || getNoteFromUserWord(word);
   const frequency = noteToFrequency(note);
@@ -527,7 +612,6 @@ function playWordSound(word) {
   oscillator.type = "sine";
   oscillator.frequency.setValueAtTime(frequency, now);
 
-  // lowpass filter làm âm mềm hơn
   filter.type = "lowpass";
   filter.frequency.setValueAtTime(1800, now);
 
@@ -589,13 +673,10 @@ function noteToFrequency(note) {
 
   const match = note.match(/^([A-G]#?)(\d)$/);
 
-  if (!match) {
-    return 440;
-  }
+  if (!match) return 440;
 
   const noteName = match[1];
   const octave = Number(match[2]);
-
   const midi = (octave + 1) * 12 + noteMap[noteName];
 
   return 440 * Math.pow(2, (midi - 69) / 12);
@@ -603,7 +684,7 @@ function noteToFrequency(note) {
 
 
 // =====================================================
-// 11. ANIMATION LOOP
+// ANIMATION LOOP
 // =====================================================
 
 function animate() {
@@ -626,8 +707,6 @@ function animate() {
 }
 
 function fadeCanvas() {
-  // destination-out làm effect mờ dần
-  // background CSS không bị ảnh hưởng
   ctx.save();
 
   ctx.globalCompositeOperation = "destination-out";
@@ -657,13 +736,11 @@ function drawInstruction() {
 
 
 // =====================================================
-// 12. CONNECTION LINE
+// CONNECTION LINE
 // =====================================================
 
 function drawConnections() {
-  if (points.length < 2) {
-    return;
-  }
+  if (points.length < 2) return;
 
   for (let i = 1; i < points.length; i++) {
     const p1 = points[i - 1];
@@ -693,7 +770,6 @@ function drawConnections() {
     }
 
     ctx.stroke();
-
     ctx.restore();
 
     p1.alpha -= 0.4;
@@ -708,7 +784,7 @@ function drawConnections() {
 
 
 // =====================================================
-// 13. CLASSES
+// CLASSES
 // =====================================================
 
 class BlurCircle {
@@ -815,7 +891,130 @@ class GodWord {
 
 
 // =====================================================
-// 14. HELPERS
+// ERASE SLIDER
+// =====================================================
+
+let eraseProgress = 0;
+
+window.addEventListener("load", function () {
+  const eraseSlider = document.getElementById("erase-slider");
+
+  if (!eraseSlider) return;
+
+  eraseSlider.addEventListener("input", function () {
+    eraseProgress = Number(eraseSlider.value) / 100;
+
+    const eraseX = canvas.width * eraseProgress;
+
+    effects = effects.filter(function (effect) {
+      return effect.x > eraseX;
+    });
+
+    points = points.filter(function (point) {
+      return point.x > eraseX;
+    });
+
+    wipeCanvasFromLeft();
+  });
+
+  eraseSlider.addEventListener("change", function () {
+    if (eraseProgress >= 1) {
+      effects = [];
+      points = [];
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      eraseProgress = 0;
+      eraseSlider.value = 0;
+    }
+  });
+});
+
+function wipeCanvasFromLeft() {
+  if (!canvas || !ctx) return;
+
+  const eraseX = canvas.width * eraseProgress;
+  const softEdge = 140;
+
+  ctx.save();
+
+  ctx.globalCompositeOperation = "destination-out";
+
+  ctx.fillStyle = "rgba(0,0,0,1)";
+  ctx.fillRect(
+    0,
+    0,
+    Math.max(0, eraseX - softEdge),
+    canvas.height
+  );
+
+  const gradient = ctx.createLinearGradient(
+    eraseX - softEdge,
+    0,
+    eraseX,
+    0
+  );
+
+  gradient.addColorStop(0, "rgba(0,0,0,1)");
+  gradient.addColorStop(1, "rgba(0,0,0,0)");
+
+  ctx.fillStyle = gradient;
+  ctx.fillRect(
+    eraseX - softEdge,
+    0,
+    softEdge,
+    canvas.height
+  );
+
+  ctx.restore();
+
+  ctx.globalCompositeOperation = "source-over";
+}
+
+
+// =====================================================
+// LANDING BUTTONS
+// =====================================================
+
+window.addEventListener("load", function () {
+  const soundToggle = document.getElementById("sound-toggle");
+  const soundImage = document.getElementById("sound-toggle-image");
+  const infoButton = document.getElementById("info-button");
+  const infoPanel = document.getElementById("info-panel");
+  const closeInfo = document.getElementById("close-info");
+
+  let soundOn = true;
+
+  if (soundToggle && soundImage) {
+    soundToggle.addEventListener("click", function () {
+      soundOn = !soundOn;
+
+      if (soundOn) {
+        soundImage.src = "assets/sound-on-btn.png";
+        soundImage.alt = "sound on";
+      } else {
+        soundImage.src = "assets/sound-off-btn.png";
+        soundImage.alt = "sound off";
+      }
+    });
+  }
+
+  if (infoButton && infoPanel) {
+    infoButton.addEventListener("click", function () {
+      infoPanel.classList.add("show");
+    });
+  }
+
+  if (closeInfo && infoPanel) {
+    closeInfo.addEventListener("click", function () {
+      infoPanel.classList.remove("show");
+    });
+  }
+});
+
+
+// =====================================================
+// HELPERS
 // =====================================================
 
 function randomFromArray(array) {
@@ -847,7 +1046,7 @@ function mapValue(
 ) {
   let mapped =
     ((value - inMin) * (outMax - outMin)) /
-      (inMax - inMin) +
+    (inMax - inMin) +
     outMin;
 
   if (shouldClamp) {
@@ -870,95 +1069,3 @@ function hexToRGBA(hex, alpha) {
   return `rgba(${r},${g},${b},${alpha})`;
 }
 
-// =====================================================
-// ADD-ON: ERASE SLIDER
-// Paste nguyên block này xuống cuối script.js
-// Không cần sửa các effect cũ.
-// =====================================================
-
-let eraseProgress = 0;
-
-window.addEventListener("load", function () {
-  const eraseSlider = document.getElementById("erase-slider");
-
-  if (!eraseSlider) {
-    console.warn("Không tìm thấy #erase-slider trong HTML.");
-    return;
-  }
-
-  eraseSlider.addEventListener("input", function () {
-    eraseProgress = Number(eraseSlider.value) / 100;
-
-    const eraseX = canvas.width * eraseProgress;
-
-    // xoá object nằm trong vùng đã bị wipe
-    effects = effects.filter(function (effect) {
-      return effect.x > eraseX;
-    });
-
-    points = points.filter(function (point) {
-      return point.x > eraseX;
-    });
-
-    wipeCanvasFromLeft();
-  });
-
-  eraseSlider.addEventListener("change", function () {
-    if (eraseProgress >= 1) {
-      effects = [];
-      points = [];
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      eraseProgress = 0;
-      eraseSlider.value = 0;
-    }
-  });
-
-  function wipeCanvasFromLeft() {
-  if (!canvas || !ctx) {
-    return;
-  }
-
-  const eraseX = canvas.width * eraseProgress;
-
-  // độ mềm của mép xoá
-  // tăng số này = mép xoá mềm hơn
-  const softEdge = 140;
-
-  ctx.save();
-
-  ctx.globalCompositeOperation = "destination-out";
-
-  // 1. xoá sạch vùng bên trái
-  ctx.fillStyle = "rgba(0,0,0,1)";
-  ctx.fillRect(
-    0,
-    0,
-    Math.max(0, eraseX - softEdge),
-    canvas.height
-  );
-
-  // 2. xoá mềm vùng rìa
-  const gradient = ctx.createLinearGradient(
-    eraseX - softEdge,
-    0,
-    eraseX,
-    0
-  );
-
-  gradient.addColorStop(0, "rgba(0,0,0,1)");
-  gradient.addColorStop(1, "rgba(0,0,0,0)");
-
-  ctx.fillStyle = gradient;
-  ctx.fillRect(
-    eraseX - softEdge,
-    0,
-    softEdge,
-    canvas.height
-  );
-
-  ctx.restore();
-
-  ctx.globalCompositeOperation = "source-over";
-}});
