@@ -940,7 +940,7 @@ function wipeCanvasFromLeft() {
 
   ctx.globalCompositeOperation = "destination-out";
 
-  ctx.fillStyle = "rgba(0,0,0,1)";
+  ctx.fillStyle = "rgba(172, 223, 53, 1)";
   ctx.fillRect(
     0,
     0,
@@ -974,25 +974,45 @@ function wipeCanvasFromLeft() {
 
 // =====================================================
 // LANDING BUTTONS
+// sound off hiện trước
+// click → sound on + nhạc chạy
+// click tiếp → sound off + nhạc tắt
 // =====================================================
 
 window.addEventListener("load", function () {
   const soundToggle = document.getElementById("sound-toggle");
   const soundImage = document.getElementById("sound-toggle-image");
+
   const infoButton = document.getElementById("info-button");
   const infoPanel = document.getElementById("info-panel");
   const closeInfo = document.getElementById("close-info");
 
-  let soundOn = true;
+  const bgMusic = document.getElementById("bg-music");
 
-  if (soundToggle && soundImage) {
+  let musicPlaying = false;
+
+  if (soundToggle && soundImage && bgMusic) {
+    // mặc định: sound OFF, không phát nhạc
+    bgMusic.pause();
+    bgMusic.volume = 0.22;
+
+    soundImage.src = "assets/sound-off-btn.png";
+    soundImage.alt = "sound off";
+
     soundToggle.addEventListener("click", function () {
-      soundOn = !soundOn;
+      if (!musicPlaying) {
+        bgMusic.play();
 
-      if (soundOn) {
+        musicPlaying = true;
+
         soundImage.src = "assets/sound-on-btn.png";
         soundImage.alt = "sound on";
       } else {
+        bgMusic.pause();
+        bgMusic.currentTime = 0;
+
+        musicPlaying = false;
+
         soundImage.src = "assets/sound-off-btn.png";
         soundImage.alt = "sound off";
       }

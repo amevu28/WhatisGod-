@@ -104,7 +104,7 @@ khung lớn giữa màn hình
 .dear-god {
   position: absolute;
 
-  left: 50%;
+  left: 51%;
   top: 48%;
 
   width: 30%;
@@ -112,19 +112,18 @@ khung lớn giữa màn hình
 
   transform: translate(-50%, -50%);
 }
+.by-ame{
+  position:absolute;
 
-.by-ame {
-  position: absolute;
+  left:50%;
+  top:57%;
 
-  left: 50%;
-  top: 57%;
+  width:28%;
+  max-width:none;
 
-  width: 8%;
-  max-width: 120px;
-
-  transform: translate(-50%, -50%);
+  transform:
+  translate(-50%,-50%);
 }
-
 .drag-arrow {
   position: absolute;
 
@@ -410,9 +409,9 @@ ERASE
   align-items: center;
   gap: 12px;
 
-  color: #5a5a5a;
+  color: #2d4511;
 
-  font-size: 13px;
+  font-size: 15px;
 }
 
 #erase-slider {
@@ -422,3 +421,4 @@ ERASE
 
   accent-color: #8b9049;
 }
+
