@@ -1,7 +1,5 @@
 // =====================================================
 // LANDING PAGE DRAG TRANSITION
-// kéo từ trái sang phải như lật / kéo một trang sách
-// không fade opacity
 // =====================================================
 
 let landingPage;
@@ -142,8 +140,6 @@ function enterMainPage() {
 
 // =====================================================
 // HOVER INK TRAIL
-// hiệu ứng mực nhỏ khi di chuyển chuột
-// fade nhanh, không cần click
 // =====================================================
 
 let inkCanvas;
@@ -153,19 +149,10 @@ let inkMarks = [];
 let lastInkX = null;
 let lastInkY = null;
 
-// chỉnh màu mực ở đây
 let inkColor = "#acbf4eff";
-
-// độ dày nét mực
 let inkLineWidth = 3;
-
-// số nhỏ hơn = mực biến mất nhanh hơn
 let inkLife = 18;
-
-// khoảng cách tối thiểu mới tạo nét mới
 let inkMinDistance = 6;
-
-// độ run của nét bút
 let inkJitter = 1.6;
 
 window.addEventListener("load", function () {
@@ -190,9 +177,6 @@ function createInkCanvas() {
   inkCanvas.style.left = "0";
   inkCanvas.style.width = "100vw";
   inkCanvas.style.height = "100vh";
-
-  // cao hơn landing để thấy trên landing page
-  // pointer-events none nên không chặn drag/click
   inkCanvas.style.zIndex = "1201";
   inkCanvas.style.pointerEvents = "none";
 
@@ -300,11 +284,6 @@ const qualities = [
 
 const userWords = [];
 
-
-// =====================================================
-// COLOR PALETTE
-// =====================================================
-
 const palette = [
   "#D49E9C",
   "#C9A7BC",
@@ -329,17 +308,13 @@ const wordNotes = {
   "peace": "D5",
   "love": "F5",
   "joy": "A5",
-
   "healing": "G5",
   "truth": "C5",
   "presence": "Bb5",
-
   "stillness": "E5",
   "the holy spirit": "D6",
-
   "wholeness": "A4",
   "forgiveness": "F4",
-
   "new perception": "C6",
   "awakening": "G4"
 };
@@ -356,6 +331,8 @@ const fallbackNotes = [
   "F4",
   "G4"
 ];
+
+
 // =====================================================
 // CANVAS + STATE
 // =====================================================
@@ -364,7 +341,16 @@ let canvas;
 let ctx;
 
 let effects = [];
+
+// points giữ node reference để line đi theo khi kéo
 let points = [];
+
+// node vẫn được lưu sau khi hình fade
+let visualNodes = [];
+
+let draggedVisualNode = null;
+let nodeDragOffsetX = 0;
+let nodeDragOffsetY = 0;
 
 let lastSpawnTime = 0;
 let lastSpawnX = 0;
@@ -384,6 +370,12 @@ let minDragDistance = 90;
 let maxPoints = 10;
 let userWordChance = 0.5;
 let fadeAlpha = 0.0055;
+
+// chỉnh độ dễ click trúng hình đã fade
+let nodeHitRadius = 72;
+
+// tối đa node lưu lại
+let maxVisualNodes = 42;
 
 
 // =====================================================
@@ -420,6 +412,7 @@ function setup() {
 
   canvas.addEventListener("mousedown", handleMouseDown);
   canvas.addEventListener("mousemove", handleMouseMove);
+  window.addEventListener("mouseup", stopDraggingNode);
 
   canvas.addEventListener("touchstart", handleTouchStart, {
     passive: false
@@ -428,6 +421,8 @@ function setup() {
   canvas.addEventListener("touchmove", handleTouchMove, {
     passive: false
   });
+
+  window.addEventListener("touchend", stopDraggingNode);
 
   animate();
 }
@@ -465,6 +460,19 @@ function submitWord() {
 function handleMouseDown(event) {
   if (isClickingInputPanel(event.clientY)) return;
 
+  const node = findVisualNodeAt(event.clientX, event.clientY);
+
+  if (node) {
+    draggedVisualNode = node;
+
+    nodeDragOffsetX = node.x - event.clientX;
+    nodeDragOffsetY = node.y - event.clientY;
+
+    brightenNodeLinks(node);
+
+    return;
+  }
+
   startAudio();
 
   currentFontSize = 24;
@@ -477,6 +485,15 @@ function handleMouseDown(event) {
 }
 
 function handleMouseMove(event) {
+  if (draggedVisualNode) {
+    draggedVisualNode.x = event.clientX + nodeDragOffsetX;
+    draggedVisualNode.y = event.clientY + nodeDragOffsetY;
+
+    brightenNodeLinks(draggedVisualNode);
+
+    return;
+  }
+
   if (event.buttons !== 1) return;
 
   if (isClickingInputPanel(event.clientY)) return;
@@ -497,6 +514,19 @@ function handleTouchStart(event) {
   if (!touch) return;
   if (isClickingInputPanel(touch.clientY)) return;
 
+  const node = findVisualNodeAt(touch.clientX, touch.clientY);
+
+  if (node) {
+    draggedVisualNode = node;
+
+    nodeDragOffsetX = node.x - touch.clientX;
+    nodeDragOffsetY = node.y - touch.clientY;
+
+    brightenNodeLinks(node);
+
+    return;
+  }
+
   startAudio();
 
   currentFontSize = 24;
@@ -514,12 +544,32 @@ function handleTouchMove(event) {
   const touch = event.touches[0];
 
   if (!touch) return;
+
+  if (draggedVisualNode) {
+    draggedVisualNode.x = touch.clientX + nodeDragOffsetX;
+    draggedVisualNode.y = touch.clientY + nodeDragOffsetY;
+
+    brightenNodeLinks(draggedVisualNode);
+
+    return;
+  }
+
   if (isClickingInputPanel(touch.clientY)) return;
 
   const dx = touch.clientX - lastSpawnX;
   const dy = touch.clientY - lastSpawnY;
 
   handleDrag(touch.clientX, touch.clientY, dx, dy);
+}
+
+function stopDraggingNode() {
+  if (draggedVisualNode) {
+    // thả ra thì tạo lại đúng một pulse cũ, rồi fade như cũ
+    effects.push(new BlurCircle(draggedVisualNode));
+    effects.push(new GodWord(draggedVisualNode));
+  }
+
+  draggedVisualNode = null;
 }
 
 function handleDrag(x, y, dx, dy) {
@@ -552,6 +602,39 @@ function isClickingInputPanel(y) {
 
 
 // =====================================================
+// NODE HIT TEST
+// =====================================================
+
+function findVisualNodeAt(x, y) {
+  for (let i = visualNodes.length - 1; i >= 0; i--) {
+    const node = visualNodes[i];
+
+    const d = getDistance(x, y, node.x, node.y);
+
+    if (d <= nodeHitRadius) {
+      return node;
+    }
+  }
+
+  return null;
+}
+
+function brightenNodeLinks(node) {
+  node.lineAlpha = 150;
+
+  const index = points.indexOf(node);
+
+  if (index > 0) {
+    points[index - 1].lineAlpha = 150;
+  }
+
+  if (index < points.length - 1) {
+    points[index + 1].lineAlpha = 150;
+  }
+}
+
+
+// =====================================================
 // SPAWN EFFECT
 // =====================================================
 
@@ -568,15 +651,30 @@ function spawn(x, y) {
 
   playWordSound(word);
 
-  effects.push(new BlurCircle(x, y, circleColor));
-  effects.push(new GodWord(x, y, word, currentFontSize));
-
-  points.push({
+  const node = {
     x: x,
     y: y,
+    word: word,
     color: circleColor,
-    alpha: 150
-  });
+    fontSize: currentFontSize,
+    angle: random(-0.08, 0.08),
+    lineAlpha: 150
+  };
+
+  visualNodes.push(node);
+
+  if (visualNodes.length > maxVisualNodes) {
+    const removedNode = visualNodes.shift();
+
+    points = points.filter(function (point) {
+      return point !== removedNode;
+    });
+  }
+
+  effects.push(new BlurCircle(node));
+  effects.push(new GodWord(node));
+
+  points.push(node);
 
   if (points.length > maxPoints) {
     points.shift();
@@ -675,12 +773,26 @@ function noteToFrequency(note) {
     B: 11
   };
 
-  const match = note.match(/^([A-G]#?)(\d)$/);
+  const match = note.match(/^([A-G]#?)(b?)(\d)$/);
 
   if (!match) return 440;
 
-  const noteName = match[1];
-  const octave = Number(match[2]);
+  let noteName = match[1];
+  const flat = match[2];
+  const octave = Number(match[3]);
+
+  if (flat === "b") {
+    const flatMap = {
+      Db: "C#",
+      Eb: "D#",
+      Gb: "F#",
+      Ab: "G#",
+      Bb: "A#"
+    };
+
+    noteName = flatMap[noteName + "b"] || noteName;
+  }
+
   const midi = (octave + 1) * 12 + noteMap[noteName];
 
   return 440 * Math.pow(2, (midi - 69) / 12);
@@ -705,6 +817,8 @@ function animate() {
     }
   }
 
+  drawDraggedNodeOnly();
+
   drawInstruction();
 
   requestAnimationFrame(animate);
@@ -723,19 +837,7 @@ function fadeCanvas() {
 }
 
 function drawInstruction() {
-  ctx.save();
-
-  ctx.fillStyle = "rgba(138,127,124,0.7)";
-  ctx.font = "14px Georgia";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(
-    "drag to reveal",
-    canvas.width / 2,
-    canvas.height - 40
-  );
-
-  ctx.restore();
+  return;
 }
 
 
@@ -750,9 +852,15 @@ function drawConnections() {
     const p1 = points[i - 1];
     const p2 = points[i];
 
+    if (!p1 || !p2) continue;
+
     ctx.save();
 
-    ctx.strokeStyle = hexToRGBA(p2.color, p2.alpha / 255);
+    ctx.strokeStyle = hexToRGBA(
+      p2.color,
+      p2.lineAlpha / 255
+    );
+
     ctx.lineWidth = 0.2;
     ctx.shadowBlur = 8;
     ctx.shadowColor = p2.color;
@@ -776,26 +884,51 @@ function drawConnections() {
     ctx.stroke();
     ctx.restore();
 
-    p1.alpha -= 0.4;
+    p1.lineAlpha -= 0.4;
   }
 
-  points[points.length - 1].alpha -= 0.7;
+  const lastPoint = points[points.length - 1];
 
-  points = points.filter(function (point) {
-    return point.alpha > 0;
-  });
+  if (lastPoint) {
+    lastPoint.lineAlpha -= 0.7;
+  }
 }
 
+
+// =====================================================
+// DRAW ONLY WHEN DRAGGING
+// không vẽ vòng tròn cố định sau khi fade
+// =====================================================
+
+function drawDraggedNodeOnly() {
+  if (!draggedVisualNode) return;
+
+  const node = draggedVisualNode;
+
+  ctx.save();
+
+  ctx.translate(node.x, node.y);
+  ctx.rotate(node.angle);
+
+  ctx.fillStyle = "rgba(45,30,20,0.85)";
+  ctx.shadowBlur = 1;
+  ctx.shadowColor = "rgba(0,0,0,0.15)";
+  ctx.font = `${node.fontSize}px Georgia`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  ctx.fillText(node.word, 0, 0);
+
+  ctx.restore();
+}
 
 // =====================================================
 // CLASSES
 // =====================================================
 
 class BlurCircle {
-  constructor(x, y, colorValue) {
-    this.x = x;
-    this.y = y;
-    this.colorValue = colorValue;
+  constructor(node) {
+    this.node = node;
 
     this.radius = 14;
     this.alpha = 100;
@@ -810,10 +943,10 @@ class BlurCircle {
     ctx.save();
 
     ctx.shadowBlur = 90;
-    ctx.shadowColor = this.colorValue;
+    ctx.shadowColor = this.node.color;
 
     ctx.strokeStyle = hexToRGBA(
-      this.colorValue,
+      this.node.color,
       this.alpha / 255
     );
 
@@ -821,8 +954,8 @@ class BlurCircle {
 
     ctx.beginPath();
     ctx.arc(
-      this.x,
-      this.y,
+      this.node.x,
+      this.node.y,
       this.radius,
       0,
       Math.PI * 2
@@ -830,7 +963,7 @@ class BlurCircle {
     ctx.stroke();
 
     ctx.strokeStyle = hexToRGBA(
-      this.colorValue,
+      this.node.color,
       (this.alpha * 0.22) / 255
     );
 
@@ -838,8 +971,8 @@ class BlurCircle {
 
     ctx.beginPath();
     ctx.arc(
-      this.x,
-      this.y,
+      this.node.x,
+      this.node.y,
       this.radius + 18,
       0,
       Math.PI * 2
@@ -855,35 +988,38 @@ class BlurCircle {
 }
 
 class GodWord {
-  constructor(x, y, word, fontSize) {
-    this.x = x;
-    this.y = y;
-    this.word = word;
+  constructor(node) {
+    this.node = node;
 
-    this.size = fontSize;
     this.alpha = 255;
-    this.angle = random(-0.08, 0.08);
+    this.offsetY = 0;
   }
 
   update() {
-    this.y -= 0.1;
+    this.offsetY -= 0.1;
     this.alpha -= 1.7;
   }
 
   draw(ctx) {
     ctx.save();
 
-    ctx.translate(this.x, this.y);
-    ctx.rotate(this.angle);
+    ctx.translate(
+      this.node.x,
+      this.node.y + this.offsetY
+    );
 
-    ctx.fillStyle = `rgba(45,30,20,${this.alpha / 255})`;
+    ctx.rotate(this.node.angle);
+
+    ctx.fillStyle =
+      `rgba(45,30,20,${this.alpha / 255})`;
+
     ctx.shadowBlur = 1;
     ctx.shadowColor = "rgba(0,0,0,0.15)";
-    ctx.font = `${this.size}px Georgia`;
+    ctx.font = `${this.node.fontSize}px Georgia`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
-    ctx.fillText(this.word, 0, 0);
+    ctx.fillText(this.node.word, 0, 0);
 
     ctx.restore();
   }
@@ -892,6 +1028,7 @@ class GodWord {
     return this.alpha <= 0;
   }
 }
+
 
 
 // =====================================================
@@ -911,11 +1048,16 @@ window.addEventListener("load", function () {
     const eraseX = canvas.width * eraseProgress;
 
     effects = effects.filter(function (effect) {
-      return effect.x > eraseX;
+      if (!effect.node) return true;
+      return effect.node.x > eraseX;
     });
 
-    points = points.filter(function (point) {
-      return point.x > eraseX;
+    visualNodes = visualNodes.filter(function (node) {
+      return node.x > eraseX;
+    });
+
+    points = points.filter(function (node) {
+      return node.x > eraseX;
     });
 
     wipeCanvasFromLeft();
@@ -925,6 +1067,7 @@ window.addEventListener("load", function () {
     if (eraseProgress >= 1) {
       effects = [];
       points = [];
+      visualNodes = [];
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -978,9 +1121,6 @@ function wipeCanvasFromLeft() {
 
 // =====================================================
 // LANDING BUTTONS
-// sound off hiện trước
-// click → sound on + nhạc chạy
-// click tiếp → sound off + nhạc tắt
 // =====================================================
 
 window.addEventListener("load", function () {
@@ -996,7 +1136,6 @@ window.addEventListener("load", function () {
   let musicPlaying = false;
 
   if (soundToggle && soundImage && bgMusic) {
-    // mặc định: sound OFF, không phát nhạc
     bgMusic.pause();
     bgMusic.volume = 0.22;
 
@@ -1046,6 +1185,10 @@ function randomFromArray(array) {
 }
 
 function random(min, max) {
+  if (max === undefined) {
+    return Math.random() * min;
+  }
+
   return Math.random() * (max - min) + min;
 }
 
@@ -1084,7 +1227,7 @@ function mapValue(
 }
 
 function hexToRGBA(hex, alpha) {
-  const cleanHex = hex.replace("#", "");
+  const cleanHex = hex.replace("#", "").substring(0, 6);
 
   const r = parseInt(cleanHex.substring(0, 2), 16);
   const g = parseInt(cleanHex.substring(2, 4), 16);
@@ -1092,4 +1235,3 @@ function hexToRGBA(hex, alpha) {
 
   return `rgba(${r},${g},${b},${alpha})`;
 }
-
