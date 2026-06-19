@@ -426,11 +426,62 @@ ERASE
   font-size: 35px;
 }
 
+
+/* RANGE */
+
 #erase-slider {
-  width: 180px;
+  appearance: none;
+  -webkit-appearance: none;
+
+  width: 380px;
+  height: 20px;
+
+  background: transparent;
 
   cursor: pointer;
+}
 
-  /* đổi màu slider ở đây */
-  accent-color: #c6cb63;
+
+/* TRACK */
+
+#erase-slider::-webkit-slider-runnable-track {
+  height: 14px;
+
+  background:
+  rgba(60,60,60,.92);
+
+  border-radius: 999px;
+
+  border:
+  1px solid
+  rgba(180,180,180,.25);
+}
+
+
+/* CUSTOM THUMB */
+
+#erase-slider::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+
+  width: 20px;
+  height: 20px;
+
+  margin-top: -4px;
+
+  background:
+  url("assets/erase-circle.png");
+
+  background-size:
+  contain;
+
+  background-repeat:
+  no-repeat;
+
+  background-position:
+  center;
+
+  border: none;
+
+  box-shadow: none;
 }
