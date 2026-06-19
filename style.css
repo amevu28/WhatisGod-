@@ -179,25 +179,29 @@ LANDING ASSETS
 
 
 /* ==========================
-LANDING BUTTONS
-sound + instruction + information
+LANDING BUTTON LAYOUT
 ========================== */
 
 .landing-buttons {
   position: absolute;
 
-  left: 42px;
-  bottom: 28px;
+  inset: 0;
 
   z-index: 1000;
 
-  display: flex;
-  align-items: center;
-  gap: 28px;
+  pointer-events: none;
 }
 
-.landing-buttons button {
-  padding: 0;
+
+/* LEFT */
+
+#instruction-button {
+  position: absolute;
+
+  left: 42px;
+  bottom: 28px;
+
+  pointer-events: auto;
 
   border: none;
   background: transparent;
@@ -205,24 +209,66 @@ sound + instruction + information
   cursor: pointer;
 }
 
+
+/* RIGHT */
+
+#sound-toggle {
+  position: absolute;
+
+  right: 200px;
+  bottom: 28px;
+
+  pointer-events: auto;
+
+  border: none;
+  background: transparent;
+
+  cursor: pointer;
+}
+
+#info-button {
+  position: absolute;
+
+  right: 42px;
+  bottom: 28px;
+
+  pointer-events: auto;
+
+  border: none;
+  background: transparent;
+
+  cursor: pointer;
+}
+
+
+/* IMAGE */
+
 .landing-buttons img {
   display: block;
 
   height: 42px;
+
   width: auto;
 
   pointer-events: none;
 }
 
-.landing-buttons button:hover {
-  transform: translateY(1px);
+
+/* HOVER */
+
+#instruction-button:hover,
+#sound-toggle:hover,
+#info-button:hover {
+  transform:
+  translateY(1px);
 }
 
-.landing-buttons button:active {
-  transform: translateY(2px);
+#instruction-button:active,
+#sound-toggle:active,
+#info-button:active {
+  transform:
+  translateY(2px);
 }
-
-
 /* ==========================
 INFO PANEL IMAGE
 ========================== */
@@ -330,7 +376,7 @@ INSTRUCTION PANEL IMAGE
   border: none;
   background: transparent;
 
-  color: #172209;
+  color: #adb92d;
 
   font-family: Georgia, serif;
   font-size: 26px;
