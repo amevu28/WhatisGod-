@@ -342,10 +342,7 @@ let ctx;
 
 let effects = [];
 
-// points giữ node reference để line đi theo khi kéo
 let points = [];
-
-// node vẫn được lưu sau khi hình fade
 let visualNodes = [];
 
 let draggedVisualNode = null;
@@ -371,10 +368,7 @@ let maxPoints = 10;
 let userWordChance = 0.5;
 let fadeAlpha = 0.0055;
 
-// chỉnh độ dễ click trúng hình đã fade
 let nodeHitRadius = 72;
-
-// tối đa node lưu lại
 let maxVisualNodes = 42;
 
 
@@ -463,6 +457,8 @@ function handleMouseDown(event) {
   const node = findVisualNodeAt(event.clientX, event.clientY);
 
   if (node) {
+    removeActiveGodWordForNode(node);
+
     draggedVisualNode = node;
 
     nodeDragOffsetX = node.x - event.clientX;
@@ -517,6 +513,8 @@ function handleTouchStart(event) {
   const node = findVisualNodeAt(touch.clientX, touch.clientY);
 
   if (node) {
+    removeActiveGodWordForNode(node);
+
     draggedVisualNode = node;
 
     nodeDragOffsetX = node.x - touch.clientX;
@@ -564,7 +562,6 @@ function handleTouchMove(event) {
 
 function stopDraggingNode() {
   if (draggedVisualNode) {
-    // thả ra thì tạo lại đúng một pulse cũ, rồi fade như cũ
     effects.push(new BlurCircle(draggedVisualNode));
     effects.push(new GodWord(draggedVisualNode));
   }
@@ -617,6 +614,15 @@ function findVisualNodeAt(x, y) {
   }
 
   return null;
+}
+
+function removeActiveGodWordForNode(node) {
+  effects = effects.filter(function (effect) {
+    return !(
+      effect instanceof GodWord &&
+      effect.node === node
+    );
+  });
 }
 
 function brightenNodeLinks(node) {
@@ -721,8 +727,8 @@ function playWordSound(word) {
     currentFontSize,
     22,
     30,
-    0.04,
-    0.12,
+    0.018,
+    0.042,
     true
   );
 
@@ -910,17 +916,17 @@ function drawDraggedNodeOnly() {
   ctx.translate(node.x, node.y);
   ctx.rotate(node.angle);
 
-  ctx.fillStyle = "rgba(45,30,20,0.85)";
-  ctx.shadowBlur = 1;
-  ctx.shadowColor = "rgba(0,0,0,0.15)";
+  ctx.fillStyle = "hsla(72, 100%, 69%, 0.85)";
   ctx.font = `${node.fontSize}px Georgia`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
+  ctx.globalAlpha = 0.2;
 
   ctx.fillText(node.word, 0, 0);
 
   ctx.restore();
 }
+
 
 // =====================================================
 // CLASSES
@@ -960,6 +966,7 @@ class BlurCircle {
       0,
       Math.PI * 2
     );
+
     ctx.stroke();
 
     ctx.strokeStyle = hexToRGBA(
@@ -970,6 +977,7 @@ class BlurCircle {
     ctx.lineWidth = 14;
 
     ctx.beginPath();
+
     ctx.arc(
       this.node.x,
       this.node.y,
@@ -977,6 +985,7 @@ class BlurCircle {
       0,
       Math.PI * 2
     );
+
     ctx.stroke();
 
     ctx.restore();
@@ -997,7 +1006,7 @@ class GodWord {
 
   update() {
     this.offsetY -= 0.1;
-    this.alpha -= 1.7;
+    this.alpha -= 2.7;
   }
 
   draw(ctx) {
@@ -1028,7 +1037,6 @@ class GodWord {
     return this.alpha <= 0;
   }
 }
-
 
 
 // =====================================================
@@ -1088,6 +1096,7 @@ function wipeCanvasFromLeft() {
   ctx.globalCompositeOperation = "destination-out";
 
   ctx.fillStyle = "rgba(172, 223, 53, 1)";
+
   ctx.fillRect(
     0,
     0,
@@ -1106,6 +1115,7 @@ function wipeCanvasFromLeft() {
   gradient.addColorStop(1, "rgba(0,0,0,0)");
 
   ctx.fillStyle = gradient;
+
   ctx.fillRect(
     eraseX - softEdge,
     0,
@@ -1137,7 +1147,7 @@ window.addEventListener("load", function () {
 
   if (soundToggle && soundImage && bgMusic) {
     bgMusic.pause();
-    bgMusic.volume = 0.22;
+    bgMusic.volume = 0.06;
 
     soundImage.src = "assets/sound-off-btn.png";
     soundImage.alt = "sound off";
