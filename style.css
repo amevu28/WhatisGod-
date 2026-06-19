@@ -11,11 +11,14 @@ CUSTOM FONT
     format("truetype");
 
   font-weight: normal;
-
   font-style: italic;
-
   font-display: swap;
 }
+
+
+/* ==========================
+BASE
+========================== */
 
 html,
 body {
@@ -34,6 +37,7 @@ body {
 
   font-family: Georgia, serif;
 }
+
 
 /* ==========================
 CANVAS
@@ -99,9 +103,9 @@ LANDING PAGE
   transform: translate(-50%, -50%);
 }
 
+
 /* ==========================
-FRAME
-khung lớn giữa màn hình
+LANDING ASSETS
 ========================== */
 
 .landing-frame {
@@ -111,11 +115,9 @@ khung lớn giữa màn hình
   top: 48%;
 
   width: 58%;
-
   max-width: 980px;
 
-  transform:
-  translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 
   pointer-events: none;
 }
@@ -131,18 +133,19 @@ khung lớn giữa màn hình
 
   transform: translate(-50%, -50%);
 }
-.by-ame{
-  position:absolute;
 
-  left:50%;
-  top:57%;
+.by-ame {
+  position: absolute;
 
-  width:28%;
-  max-width:none;
+  left: 50%;
+  top: 57%;
 
-  transform:
-  translate(-50%,-50%);
+  width: 28%;
+  max-width: none;
+
+  transform: translate(-50%, -50%);
 }
+
 .drag-arrow {
   position: absolute;
 
@@ -177,7 +180,7 @@ khung lớn giữa màn hình
 
 /* ==========================
 LANDING BUTTONS
-sound + information
+sound + instruction + information
 ========================== */
 
 .landing-buttons {
@@ -247,7 +250,6 @@ INFO PANEL IMAGE
 
 #info-panel-image {
   width: min(88vw, 850px);
-
   height: auto;
 
   display: block;
@@ -278,6 +280,69 @@ INFO PANEL IMAGE
   cursor: pointer;
 }
 
+
+/* ==========================
+INSTRUCTION PANEL IMAGE
+========================== */
+
+#instruction-panel {
+  position: fixed;
+
+  left: 50%;
+  top: 48%;
+
+  transform: translate(-50%, -50%) scale(0.96);
+
+  z-index: 1200;
+
+  display: none;
+
+  background: transparent;
+}
+
+#instruction-panel.show {
+  display: block;
+
+  animation: infoPanelIn 0.35s ease forwards;
+}
+
+#instruction-panel-image {
+  width: min(88vw, 850px);
+  height: auto;
+
+  display: block;
+
+  user-select: none;
+  pointer-events: none;
+}
+
+#close-instruction {
+  position: absolute;
+
+  right: 2%;
+  top: 3.1%;
+
+  z-index: 2;
+
+  width: 34px;
+  height: 34px;
+
+  border: none;
+  background: transparent;
+
+  color: #172209;
+
+  font-family: Georgia, serif;
+  font-size: 26px;
+
+  cursor: pointer;
+}
+
+
+/* ==========================
+PANEL ANIMATION
+========================== */
+
 @keyframes infoPanelIn {
   from {
     opacity: 0;
@@ -289,6 +354,7 @@ INFO PANEL IMAGE
     transform: translate(-50%, -50%) scale(1);
   }
 }
+
 
 /* ==========================
 CUSTOM QUESTION INPUT
@@ -420,8 +486,8 @@ ERASE
   color: #172209;
 
   font-family:
-  "Bordeaux",
-  serif;
+    "Bordeaux",
+    serif;
 
   font-size: 35px;
 }
@@ -448,13 +514,13 @@ ERASE
   height: 14px;
 
   background:
-  rgba(60,60,60,.92);
+    rgba(60, 60, 60, 0.92);
 
   border-radius: 999px;
 
   border:
-  1px solid
-  rgba(180,180,180,.25);
+    1px solid
+    rgba(180, 180, 180, 0.25);
 }
 
 
@@ -470,16 +536,11 @@ ERASE
   margin-top: -4px;
 
   background:
-  url("assets/erase-circle.png");
+    url("assets/erase-circle.png");
 
-  background-size:
-  contain;
-
-  background-repeat:
-  no-repeat;
-
-  background-position:
-  center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 
   border: none;
 

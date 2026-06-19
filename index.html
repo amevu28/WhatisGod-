@@ -10,74 +10,106 @@
 </head>
 
 <body>
+
   <!-- ==========================
   LANDING PAGE
   =========================== -->
 
   <section id="landing-page">
+
     <img
       class="landing-bg"
       src="assets/background.png"
       alt=""
     />
 
-   <div class="landing-composition">
+    <div class="landing-composition">
 
-  <!-- FRAME -->
-  <img
-    class="landing-frame"
-    src="assets/frame.png"
-    alt=""
-  />
+      <img
+        class="landing-frame"
+        src="assets/frame.png"
+        alt=""
+      />
 
-  <!-- TITLE -->
-  <img
-    class="dear-god"
-    src="assets/dear-god.png"
-    alt="Dear God,"
-  />
+      <img
+        class="dear-god"
+        src="assets/dear-god.png"
+        alt="Dear God,"
+      />
 
-  <!-- AUTHOR -->
-  <img
-    class="by-ame"
-    src="assets/by-ame.png"
-    alt="by amè"
-  />
+      <img
+        class="by-ame"
+        src="assets/by-ame.png"
+        alt="by amè"
+      />
 
-  <!-- DRAG -->
-  <img
-    class="drag-arrow"
-    src="assets/drag-to-start-arrow.png"
-    alt="drag to start"
-  />
+      <img
+        class="drag-arrow"
+        src="assets/drag-to-start-arrow.png"
+        alt="drag to start"
+      />
 
-</div>
-    <nav class="landing-buttons" aria-label="landing controls">
-      <button id="sound-toggle" type="button">
+    </div>
+
+
+    <!-- LANDING CONTROLS -->
+
+    <nav
+      class="landing-buttons"
+      aria-label="landing controls"
+    >
+
+      <button
+        id="sound-toggle"
+        type="button"
+        aria-label="toggle sound"
+      >
         <img
           id="sound-toggle-image"
-          src="assets/sound-on-btn.png"
-          alt="sound on"
+          src="assets/sound-off-btn.png"
+          alt="sound off"
         />
       </button>
 
-      <audio
-  id="bg-music"
-  loop
->
-  <source
-    src="assets/geoffharvey-finding-mithral-openworld-game-375527.mp3"
-    type="audio/mpeg"
-  >
-</audio>
 
-      <button id="info-button" type="button">
+      <button
+        id="instruction-button"
+        type="button"
+        aria-label="open instructions"
+      >
+        <img
+          src="assets/instruction-button.png"
+          alt="instruction"
+        />
+      </button>
+
+
+      <button
+        id="info-button"
+        type="button"
+        aria-label="open information"
+      >
         <img
           src="assets/info.png"
           alt="information"
         />
       </button>
+
     </nav>
+
+
+    <!-- BACKGROUND MUSIC -->
+
+    <audio
+      id="bg-music"
+      loop
+    >
+      <source
+        src="assets/geoffharvey-finding-mithral-openworld-game-375527.mp3"
+        type="audio/mpeg"
+      >
+    </audio>
+
   </section>
 
 
@@ -85,23 +117,60 @@
   INFORMATION PANEL
   =========================== -->
 
-  <section id="info-panel" aria-label="information panel">
-  <button id="close-info" type="button" aria-label="close information">
-    ×
-  </button>
+  <section
+    id="info-panel"
+    aria-label="information panel"
+  >
 
-  <img
-    id="info-panel-image"
-    src="assets/information-panel.png"
-    alt="Information about Dear God"
-  />
-</section>
+    <button
+      id="close-info"
+      type="button"
+      aria-label="close information"
+    >
+      ×
+    </button>
+
+    <img
+      id="info-panel-image"
+      src="assets/information-panel.png"
+      alt="Information about Dear God"
+    />
+
+  </section>
+
+
+  <!-- ==========================
+  INSTRUCTION PANEL
+  =========================== -->
+
+  <section
+    id="instruction-panel"
+    aria-label="instruction panel"
+  >
+
+    <button
+      id="close-instruction"
+      type="button"
+      aria-label="close instruction"
+    >
+      ×
+    </button>
+
+    <img
+      id="instruction-panel-image"
+      src="assets/instruction-panel.png"
+      alt="Instructions for Dear God"
+    />
+
+  </section>
+
 
   <!-- ==========================
   MAIN INTERACTION INPUT
   =========================== -->
 
   <section id="input-panel">
+
     <img
       id="question-image"
       src="assets/question.png"
@@ -109,7 +178,9 @@
     />
 
     <div id="answer-row">
+
       <div id="type-bar-wrap">
+
         <img
           id="type-bar-image"
           src="assets/type-bar.png"
@@ -123,42 +194,50 @@
           autocomplete="off"
           aria-label="type your word"
         />
+
       </div>
 
-      <button id="submit-button" type="button" aria-label="send">
+      <button
+        id="submit-button"
+        type="button"
+        aria-label="send"
+      >
         <img
           id="send-button-image"
           src="assets/send-button.png"
           alt="send"
         />
       </button>
+
     </div>
+
   </section>
 
 
-<!-- ==========================
-ERASE
-========================== -->
+  <!-- ==========================
+  ERASE
+  =========================== -->
 
-<section id="erase-panel">
+  <section id="erase-panel">
 
-  <span id="erase-label">
-    erase
-  </span>
+    <span id="erase-label">
+      erase
+    </span>
 
-  <input
-    id="erase-slider"
-    type="range"
-    min="0"
-    max="100"
-    value="0"
-    step="1"
-    aria-label="erase canvas"
-  >
+    <input
+      id="erase-slider"
+      type="range"
+      min="0"
+      max="100"
+      value="0"
+      step="1"
+      aria-label="erase canvas"
+    >
 
-</section>
+  </section>
 
 
   <script src="script.js"></script>
+
 </body>
 </html>

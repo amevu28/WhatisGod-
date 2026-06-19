@@ -1184,7 +1184,32 @@ window.addEventListener("load", function () {
     });
   }
 });
+// ==========================
+// INSTRUCTION PANEL
+// ==========================
 
+const instructionButton =
+  document.getElementById("instruction-button");
+
+const instructionPanel =
+  document.getElementById("instruction-panel");
+
+const closeInstruction =
+  document.getElementById("close-instruction");
+
+
+if (instructionButton && instructionPanel) {
+  instructionButton.addEventListener("click", function () {
+    instructionPanel.classList.add("show");
+  });
+}
+
+
+if (closeInstruction && instructionPanel) {
+  closeInstruction.addEventListener("click", function () {
+    instructionPanel.classList.remove("show");
+  });
+}
 
 // =====================================================
 // HELPERS
