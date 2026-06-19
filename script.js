@@ -288,7 +288,7 @@ const palette = [
   "#D49E9C",
   "#C9A7BC",
   "#A4B1C8",
-  "#DCC7B6",
+  "#9fb454ff",
   "#D576B5",
   "#C3A9A1",
   "#7F8E78",
