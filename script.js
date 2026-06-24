@@ -1,6 +1,38 @@
 // =====================================================
+// DEAR GOD — SCRIPT DOCUMENTATION
+// =====================================================
+//
+// My main interaction reference for this project was Patatap,
+// an interactive animation and sound kit where a user action creates
+// both a visual response and a sound. I was interested in how Patatap
+// makes interaction feel immediate and sensory, but I changed the main
+// action from pressing/tapping into dragging because I wanted Dear God
+// to feel slower, more reflective, and more connected to the idea of
+// revealing a personal interpretation.
+//
+// In this script, the main things I learned are how to use the Canvas API
+// to draw temporary visual marks, how to store drawn objects as data so
+// they can be moved again, how to use mouse and touch events for drag
+// interaction, and how to use the Web Audio API to generate small notes.
+// The main references I used were:
+// - Patatap: https://patatap.com/
+// - MDN Canvas API / fillText(): https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillText
+// - MDN Web Audio API: https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
+// - MDN Touch Events: https://developer.mozilla.org/en-US/docs/Web/API/Touch_events
+
+
+// =====================================================
 // LANDING PAGE DRAG TRANSITION
 // =====================================================
+//
+// I learned that a page transition can be built by storing the first
+// pointer position, comparing it with the current pointer position, and
+// translating the whole landing section with CSS transform. This is the
+// first interaction in the project, so I wanted it to work like opening
+// a page rather than pressing a normal web button. The variables below
+// store whether the landing page is being dragged, where the drag starts,
+// where the pointer currently is, and whether the page has already been
+// entered.
 
 let landingPage;
 let isLandingDragging = false;
@@ -141,6 +173,14 @@ function enterMainPage() {
 // =====================================================
 // HOVER INK TRAIL
 // =====================================================
+//
+// I learned that a second canvas can be used as a separate visual layer.
+// This part creates a temporary ink trail that follows the cursor. It is
+// not the main word-spawning canvas; it is a light atmospheric layer for
+// the landing page. Each mark is stored with a short life value, then
+// redrawn and faded inside animateInk(). This supports the design because
+// the project begins with the feeling of soft traces before the user
+// enters the main word canvas.
 
 let inkCanvas;
 let inkCtx;
@@ -266,6 +306,13 @@ function animateInk() {
 // =====================================================
 // WORD BANK
 // =====================================================
+//
+// This is my original interpretation of Dear God. I used words connected
+// to my own faith, such as peace, love, forgiveness, truth, and the Holy
+// Spirit. I also keep a separate userWords array because the project is
+// not only about my definition. As the user submits their own words, the
+// system can begin choosing from their vocabulary too, allowing my version
+// of Dear God to slowly make space for theirs.
 
 const qualities = [
   "peace",
@@ -303,6 +350,15 @@ const palette = [
 // =====================================================
 // SOUND NOTES
 // =====================================================
+//
+// I learned this idea from Patatap, where each user action produces both
+// a visual response and a sound. In my project, I adapted that logic by
+// mapping each default word to a specific note, while user-submitted words
+// use fallbackNotes through a simple text-to-note function. I intentionally
+// selected notes that sit within the same harmonic space as the background
+// music, so when users interact while the music is turned on, the generated
+// sounds can blend together and feel harmonious rather than competing for
+// attention.
 
 const wordNotes = {
   "peace": "D5",
@@ -336,6 +392,13 @@ const fallbackNotes = [
 // =====================================================
 // CANVAS + STATE
 // =====================================================
+//
+// I learned that canvas drawings are not automatically interactive like
+// HTML elements. Once text is drawn with fillText(), it becomes pixels.
+// To make old words draggable again, I needed to store each generated word
+// as a node object inside arrays. effects controls temporary animations,
+// points controls connection lines, and visualNodes stores faded objects
+// so they can still be clicked and moved.g
 
 let canvas;
 let ctx;
@@ -361,6 +424,13 @@ let audioContext = null;
 // =====================================================
 // SETTINGS
 // =====================================================
+//
+// These settings are the main tuning points for the interaction. I kept
+// them together because I learned that interactive work often needs many
+// small adjustments rather than one fixed value. triggerDelay and
+// minDragDistance control how often words spawn during dragging, fadeAlpha
+// controls how slowly the canvas disappears, and nodeHitRadius controls
+// how easy it is to click a faded word again.
 
 let triggerDelay = 220;
 let minDragDistance = 90;
@@ -375,6 +445,12 @@ let maxVisualNodes = 42;
 // =====================================================
 // SETUP
 // =====================================================
+//
+// I learned that setup code should create the canvas, connect HTML buttons
+// to JavaScript, prepare mouse/touch interaction, and then start the
+// animation loop. This part is the technical foundation of the project.
+// It connects the designed interface in HTML with the generative canvas
+// system in JavaScript.
 
 window.addEventListener("load", setup);
 
@@ -432,6 +508,12 @@ function resizeCanvas() {
 // =====================================================
 // INPUT
 // =====================================================
+//
+// I learned how to take text from an HTML input, clean it with trim(),
+// convert it to lowercase, and store it in an array. This is where the
+// audience's own Dear God begins to enter the system. Their words do not
+// replace my word bank immediately, but they become part of the pool that
+// can appear on the canvas.
 
 function submitWord() {
   const input = document.getElementById("god-input");
@@ -450,6 +532,13 @@ function submitWord() {
 // =====================================================
 // MOUSE + TOUCH INTERACTION
 // =====================================================
+//
+// I learned that mouse and touch interaction need similar logic but use
+// different event properties. Mouse uses clientX/clientY directly, while
+// touch uses touches[0]. This part decides whether the user is dragging an
+// existing node or creating new words. This matters for the design because
+// the canvas should not only generate meaning; it should let the user
+// return to old words and rearrange them.
 
 function handleMouseDown(event) {
   if (isClickingInputPanel(event.clientY)) return;
@@ -601,6 +690,13 @@ function isClickingInputPanel(y) {
 // =====================================================
 // NODE HIT TEST
 // =====================================================
+//
+// I learned that because canvas objects are just pixels, I need my own hit
+// test to detect whether the pointer is close enough to a stored node.
+// findVisualNodeAt() measures the distance between the pointer and each
+// saved word. This is the part that makes faded words draggable again,
+// which supports my intention of letting meanings be rearranged after
+// they appear.
 
 function findVisualNodeAt(x, y) {
   for (let i = visualNodes.length - 1; i >= 0; i--) {
@@ -643,6 +739,13 @@ function brightenNodeLinks(node) {
 // =====================================================
 // SPAWN EFFECT
 // =====================================================
+//
+// This is the main interaction of the work. I learned that one function
+// can create a complete event: choose a word, choose a colour, play a
+// sound, store the word as a node, draw a blur circle, draw the word, and
+// add it to the connection map. This is the part most directly inspired
+// by Patatap's relationship between action, sound, and visual feedback,
+// but here it becomes slower and more personal through dragging.
 
 function spawn(x, y) {
   const circleColor = randomFromArray(palette);
@@ -691,6 +794,12 @@ function spawn(x, y) {
 // =====================================================
 // SOUND
 // =====================================================
+//
+// I learned from the Web Audio API that sound can be generated in the
+// browser through an AudioContext. In this section, OscillatorNode creates
+// a sine tone, GainNode controls the volume envelope, and BiquadFilterNode
+// softens the sound. This relates to the design because each word should
+// feel like a small sonic trace rather than a loud interface effect.
 
 function startAudio() {
   if (!audioContext) {
@@ -808,6 +917,13 @@ function noteToFrequency(note) {
 // =====================================================
 // ANIMATION LOOP
 // =====================================================
+//
+// requestAnimationFrame() is the main way to create a
+// continuous animation loop in the browser. In this project, animate()
+// fades the canvas, redraws the connection lines, updates active effects,
+// and keeps checking whether each effect is finished. This is important
+// because Dear God should not feel static; the words should appear, drift,
+// connect, and slowly disappear.
 
 function animate() {
   fadeCanvas();
@@ -850,6 +966,12 @@ function drawInstruction() {
 // =====================================================
 // CONNECTION LINE
 // =====================================================
+//
+// I learned that a line can connect stored points rather than fixed DOM
+// elements. The code loops through the points array and draws a slightly
+// irregular line between each pair. This supports the concept of a
+// connected map: each word is separate, but the lines make them feel like
+// parts of one personal interpretation.
 
 function drawConnections() {
   if (points.length < 2) return;
@@ -903,8 +1025,13 @@ function drawConnections() {
 
 // =====================================================
 // DRAW ONLY WHEN DRAGGING
-// không vẽ vòng tròn cố định sau khi fade
 // =====================================================
+//
+// I learned that dragging a canvas object can accidentally leave repeated
+// text marks because canvas keeps redrawing pixels. This function draws a
+// very light version of the dragged word only while it is being moved. It
+// is intentionally different from the normal GodWord effect, so the user
+// can see what they are holding without creating a dark, heavy trail.
 
 function drawDraggedNodeOnly() {
   if (!draggedVisualNode) return;
@@ -931,6 +1058,11 @@ function drawDraggedNodeOnly() {
 // =====================================================
 // CLASSES
 // =====================================================
+//
+// I learned to use small classes for repeated effects. Instead of writing
+// the drawing logic directly inside spawn(), each effect has its own
+// update(), draw(), and isDead() methods. This structure makes the code
+// easier to control because the circle and the word fade independently.
 
 class BlurCircle {
   constructor(node) {
@@ -1042,6 +1174,12 @@ class GodWord {
 // =====================================================
 // ERASE SLIDER
 // =====================================================
+//
+// I learned that a range input can control more than a visual slider. Here
+// the slider value becomes an erase progress value from 0 to 1. The code
+// removes effects and saved nodes on the left side, then wipes the canvas
+// with a soft edge. This connects to the design because erasing is not
+// just clearing the screen; it becomes a way to release and make space.
 
 let eraseProgress = 0;
 
@@ -1132,6 +1270,12 @@ function wipeCanvasFromLeft() {
 // =====================================================
 // LANDING BUTTONS
 // =====================================================
+//
+// I learned to keep interface controls separate from the canvas drawing.
+// This section connects the designed sound, information, and instruction
+// buttons to JavaScript. The background music starts off, because I want
+// the user to choose whether sound enters the space. The panels also keep
+// explanation optional instead of forcing the user to read everything first.
 
 window.addEventListener("load", function () {
   const soundToggle = document.getElementById("sound-toggle");
@@ -1184,9 +1328,16 @@ window.addEventListener("load", function () {
     });
   }
 });
-// ==========================
+
+
+// =====================================================
 // INSTRUCTION PANEL
-// ==========================
+// =====================================================
+//
+// This part uses the same open/close logic as the information panel. I
+// separated it because the information panel explains the concept, while
+// the instruction panel explains how to interact. This keeps the interface
+// clearer and gives the audience control over how much guidance they need.
 
 const instructionButton =
   document.getElementById("instruction-button");
@@ -1211,9 +1362,16 @@ if (closeInstruction && instructionPanel) {
   });
 }
 
+
 // =====================================================
 // HELPERS
 // =====================================================
+//
+// These helper functions keep repeated calculations outside the main
+// interaction code. I learned that this makes the project easier to tune:
+// randomFromArray chooses words and colours, getDistance supports drag and
+// hit detection, mapValue converts speed into font size and sound volume,
+// and hexToRGBA lets colour values fade smoothly.
 
 function randomFromArray(array) {
   return array[Math.floor(Math.random() * array.length)];

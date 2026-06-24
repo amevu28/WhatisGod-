@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,26 +10,64 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 
+
 <body>
 
-  <!-- ==========================
-  LANDING PAGE
-  =========================== -->
+  <!--
+  =====================================================
+  PROJECT STATEMENT — DEAR GOD
+  =====================================================
+
+  Dear God is an interactive experience that invites each user
+  to build a connected map of what “Dear God” means to them.
+
+  My starting point comes from my own Christian faith, especially
+  the idea of the Trinity and the way God is described through
+  qualities such as love, courage, presence, forgiveness, and truth.
+  These words form my first interpretation of “Dear God”.
+
+  However, this project does not ask the audience to agree with my
+  definition. Instead, it leaves space for each person to bring their
+  own version of Dear God into the work. Their Dear God might be a
+  person, a place, a feeling, a memory, or something they cannot fully
+  explain.
+
+  I chose dragging as the main interaction because it feels slower and
+  more intentional than clicking. Dragging makes the user physically
+  reveal, move, and rearrange meaning. As users add their own words,
+  my original interpretation gradually fades and makes room for theirs.
+  The canvas becomes a shared but personal map, where different
+  definitions can appear, connect, move, and disappear.
+  -->
+
+
+  <!--
+  =====================================================
+  1. LANDING PAGE
+  This is the entry point of the experience.
+  It uses image assets designed in Illustrator.
+  =====================================================
+  -->
 
   <section id="landing-page">
 
+    <!-- Background image -->
     <img
       class="landing-bg"
       src="assets/background.png"
       alt=""
+      aria-hidden="true"
     />
 
+
+    <!-- Main landing composition -->
     <div class="landing-composition">
 
       <img
         class="landing-frame"
         src="assets/frame.png"
         alt=""
+        aria-hidden="true"
       />
 
       <img
@@ -52,12 +91,29 @@
     </div>
 
 
-    <!-- LANDING CONTROLS -->
+    <!--
+    Landing controls:
+    - sound button controls background music
+    - instruction button opens interaction guide
+    - information button opens project information
+    -->
 
     <nav
       class="landing-buttons"
       aria-label="landing controls"
     >
+
+      <button
+        id="instruction-button"
+        type="button"
+        aria-label="open instructions"
+      >
+        <img
+          src="assets/instruction-button.png"
+          alt="instruction"
+        />
+      </button>
+
 
       <button
         id="sound-toggle"
@@ -68,18 +124,6 @@
           id="sound-toggle-image"
           src="assets/sound-off-btn.png"
           alt="sound off"
-        />
-      </button>
-
-
-      <button
-        id="instruction-button"
-        type="button"
-        aria-label="open instructions"
-      >
-        <img
-          src="assets/instruction-button.png"
-          alt="instruction"
         />
       </button>
 
@@ -98,7 +142,14 @@
     </nav>
 
 
-    <!-- BACKGROUND MUSIC -->
+    <!--
+BACKGROUND MUSIC
+
+Free Music Track:
+"Finding Mithral (Open World Game)"
+by Geoff Harvey
+
+Source: Pixabay -->
 
     <audio
       id="bg-music"
@@ -107,15 +158,20 @@
       <source
         src="assets/geoffharvey-finding-mithral-openworld-game-375527.mp3"
         type="audio/mpeg"
-      >
+      />
     </audio>
 
   </section>
 
 
-  <!-- ==========================
-  INFORMATION PANEL
-  =========================== -->
+
+  <!--
+  =====================================================
+  2. INFORMATION PANEL
+  This panel explains the concept of the project.
+  It appears when the user opens the information button.
+  =====================================================
+  -->
 
   <section
     id="info-panel"
@@ -139,9 +195,14 @@
   </section>
 
 
-  <!-- ==========================
-  INSTRUCTION PANEL
-  =========================== -->
+
+  <!--
+  =====================================================
+  3. INSTRUCTION PANEL
+  This panel explains how to interact with the work.
+  It appears when the user opens the instruction button.
+  =====================================================
+  -->
 
   <section
     id="instruction-panel"
@@ -165,17 +226,26 @@
   </section>
 
 
-  <!-- ==========================
-  MAIN INTERACTION INPUT
-  =========================== -->
 
-  <section id="input-panel">
+  <!--
+  =====================================================
+  4. MAIN INTERACTION INPUT
+  This is where users type and submit their own words.
+  The assets were made in Adobe Illustrator.
+  =====================================================
+  -->
+
+  <section
+    id="input-panel"
+    aria-label="word input panel"
+  >
 
     <img
       id="question-image"
       src="assets/question.png"
       alt="What is God to you?"
     />
+
 
     <div id="answer-row">
 
@@ -185,6 +255,7 @@
           id="type-bar-image"
           src="assets/type-bar.png"
           alt=""
+          aria-hidden="true"
         />
 
         <input
@@ -197,10 +268,11 @@
 
       </div>
 
+
       <button
         id="submit-button"
         type="button"
-        aria-label="send"
+        aria-label="send word"
       >
         <img
           id="send-button-image"
@@ -214,11 +286,19 @@
   </section>
 
 
-  <!-- ==========================
-  ERASE
-  =========================== -->
 
-  <section id="erase-panel">
+  <!--
+  =====================================================
+  5. ERASE CONTROL
+  The erase slider allows users to remove everything from the canvas.
+  Conceptually, it acts like clearing space or letting go of old definitions as we grow and start again.
+  =====================================================
+  -->
+
+  <section
+    id="erase-panel"
+    aria-label="erase canvas panel"
+  >
 
     <span id="erase-label">
       erase
@@ -232,12 +312,20 @@
       value="0"
       step="1"
       aria-label="erase canvas"
-    >
+    />
 
   </section>
 
 
+
+  <!--
+  =====================================================
+  6. JAVASCRIPT
+  =====================================================
+  -->
+
   <script src="script.js"></script>
 
 </body>
+
 </html>

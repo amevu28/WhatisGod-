@@ -1,6 +1,5 @@
 /* ==========================
-CUSTOM FONT
-1589_Humane_BordeauxW00-It
+Fonts
 ========================== */
 
 @font-face {
@@ -17,7 +16,7 @@ CUSTOM FONT
 
 
 /* ==========================
-BASE
+Back ground: i made this background in Procreate, taking inspiration from the oil paint works of artist @yyitaiarts on Instagram, (https://www.instagram.com/yyitaiarts/)
 ========================== */
 
 html,
@@ -40,7 +39,7 @@ body {
 
 
 /* ==========================
-CANVAS
+CANVAS LAYER
 ========================== */
 
 #effect-canvas {
@@ -74,6 +73,9 @@ LANDING PAGE
   background: transparent;
 
   cursor: grab;
+
+  touch-action: none;
+  user-select: none;
 }
 
 #landing-page.dragging {
@@ -105,7 +107,7 @@ LANDING PAGE
 
 
 /* ==========================
-LANDING ASSETS
+LANDING VISUAL ASSETS
 ========================== */
 
 .landing-frame {
@@ -160,6 +162,11 @@ LANDING ASSETS
   animation: dragBreath 1.8s ease-in-out infinite;
 }
 
+
+/* ==========================
+DRAG ARROW ANIMATION
+========================== */
+
 @keyframes dragBreath {
   0% {
     transform: translate(-50%, -50%) translateY(0);
@@ -179,7 +186,7 @@ LANDING ASSETS
 
 
 /* ==========================
-LANDING BUTTON LAYOUT
+LANDING BUTTON AREA
 ========================== */
 
 .landing-buttons {
@@ -193,7 +200,10 @@ LANDING BUTTON LAYOUT
 }
 
 
-/* LEFT */
+/* ==========================
+LEFT BUTTON
+Instruction
+========================== */
 
 #instruction-button {
   position: absolute;
@@ -210,7 +220,10 @@ LANDING BUTTON LAYOUT
 }
 
 
-/* RIGHT */
+/* ==========================
+RIGHT BUTTONS
+Sound + information
+========================== */
 
 #sound-toggle {
   position: absolute;
@@ -241,7 +254,9 @@ LANDING BUTTON LAYOUT
 }
 
 
-/* IMAGE */
+/* ==========================
+BUTTON IMAGE STYLE
+========================== */
 
 .landing-buttons img {
   display: block;
@@ -254,23 +269,25 @@ LANDING BUTTON LAYOUT
 }
 
 
-/* HOVER */
+/* ==========================
+BUTTON FEEDBACK
+========================== */
 
 #instruction-button:hover,
 #sound-toggle:hover,
 #info-button:hover {
-  transform:
-  translateY(1px);
+  transform: translateY(1px);
 }
 
 #instruction-button:active,
 #sound-toggle:active,
 #info-button:active {
-  transform:
-  translateY(2px);
+  transform: translateY(2px);
 }
+
+
 /* ==========================
-INFO PANEL IMAGE
+INFORMATION PANEL
 ========================== */
 
 #info-panel {
@@ -328,7 +345,7 @@ INFO PANEL IMAGE
 
 
 /* ==========================
-INSTRUCTION PANEL IMAGE
+INSTRUCTION PANEL
 ========================== */
 
 #instruction-panel {
@@ -386,7 +403,7 @@ INSTRUCTION PANEL IMAGE
 
 
 /* ==========================
-PANEL ANIMATION
+PANEL OPENING ANIMATION
 ========================== */
 
 @keyframes infoPanelIn {
@@ -403,8 +420,7 @@ PANEL ANIMATION
 
 
 /* ==========================
-CUSTOM QUESTION INPUT
-dùng asset từ Illustrator
+MAIN QUESTION INPUT
 ========================== */
 
 #input-panel {
@@ -434,6 +450,11 @@ dùng asset từ Illustrator
   align-items: center;
   gap: 16px;
 }
+
+
+/* ==========================
+CUSTOM TYPE BAR
+========================== */
 
 #type-bar-wrap {
   position: relative;
@@ -480,6 +501,11 @@ dùng asset từ Illustrator
   text-align: left;
 }
 
+
+/* ==========================
+SEND BUTTON
+========================== */
+
 #submit-button {
   width: 108px;
   height: 44px;
@@ -511,7 +537,7 @@ dùng asset từ Illustrator
 
 
 /* ==========================
-ERASE
+ERASE PANEL
 ========================== */
 
 #erase-panel {
@@ -539,7 +565,9 @@ ERASE
 }
 
 
-/* RANGE */
+/* ==========================
+ERASE SLIDER
+========================== */
 
 #erase-slider {
   appearance: none;
@@ -554,7 +582,9 @@ ERASE
 }
 
 
-/* TRACK */
+/* ==========================
+SLIDER TRACK
+========================== */
 
 #erase-slider::-webkit-slider-runnable-track {
   height: 14px;
@@ -570,7 +600,9 @@ ERASE
 }
 
 
-/* CUSTOM THUMB */
+/* ==========================
+SLIDER THUMB
+========================== */
 
 #erase-slider::-webkit-slider-thumb {
   appearance: none;
